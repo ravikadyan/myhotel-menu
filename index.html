@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyHotel - Digital Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    
+    :root {
+      --primary: #1A1A1A;
+      --accent: #D4A373;
+      --bg: #FAFAFA;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --text-light: #6B6B6B;
+      --border: #E8E8E8;
+      --green: #10B981;
+      --red: #EF4444;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding-bottom: 100px;
+    }
+    
+    .header {
+      background: var(--primary);
+      padding: 40px 20px 45px;
+      text-align: center;
+    }
+    
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 42px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 8px;
+    }
+    
+    .tagline {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    
+    .table-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 8px 18px;
+      border-radius: 100px;
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    
+    .search-container {
+      padding: 18px 20px;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .search-box { position: relative; }
+    
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+    
+    .search-input {
+      width: 100%;
+      padding: 12px 16px 12px 45px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .filters {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: white;
+    }
+    
+    .filters::-webkit-scrollbar { display: none; }
+    
+    .filter-chip {
+      flex-shrink: 0;
+      padding: 9px 18px;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    
+    .filter-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      padding: 16px 20px;
+    }
+    
+    .dish-card {
+      background: var(--card);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: all 0.25s;
+    }
+    
+    .dish-card:active { transform: scale(0.97); }
+    
+    .dish-image-wrapper {
+      width: 100%;
+      height: 150px;
+      background: #FCFCFC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      position: relative;
+    }
+    
+    .dish-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .veg-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+    }
+    
+    .veg-badge.veg { border-color: var(--green); }
+    .veg-badge.veg::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+    
+    .veg-badge.nonveg { border-color: var(--red); }
+    .veg-badge.nonveg::after {
+      content: '';
+      width: 0; height: 0;
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 8px solid var(--red);
+    }
+    
+    .dish-info { padding: 14px; }
+    
+    .dish-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+    
+    .dish-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 10px;
+    }
+    
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    
+    .dish-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .dish-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .add-button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .add-button:active { transform: scale(0.95); }
+    
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg);
+      padding: 6px 12px;
+      border-radius: 100px;
+      border: 1.5px solid var(--primary);
+    }
+    
+    .qty-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .qty-number {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    .tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 8px;
+    }
+    
+    .tag.popular {
+      background: #FFF4E6;
+      color: #B45309;
+    }
+    
+    .cart-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: var(--primary);
+      padding: 16px 20px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    
+    .cart-bar.show { display: flex; }
+    
+    .cart-details { color: white; }
+    
+    .cart-count {
+      font-size: 13px;
+      opacity: 0.8;
+      margin-bottom: 2px;
+    }
+    
+    .cart-total {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .view-cart-button {
+      background: var(--accent);
+      color: var(--primary);
+      border: none;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .social-buttons {
+      position: fixed;
+      bottom: 100px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 50;
+    }
+    
+    .social-btn {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+    
+    .social-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .social-btn.instagram {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+    
+    .social-btn.google {
+      background: white;
+      border: 3px solid var(--accent);
+    }
+    
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: flex-end;
+    }
+    
+    .modal-overlay.show { display: flex; }
+    .modal-overlay.center { align-items: center; justify-content: center; }
+    
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      border-radius: 24px 24px 0 0;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s;
+      position: relative;
+    }
+    
+    .modal.center-modal {
+      border-radius: 24px;
+      max-height: 80vh;
+      max-width: 400px;
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px; right: 20px;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .modal-body { padding: 24px; }
+    
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .cart-item-image {
+      width: 70px; height: 70px;
+      background: #FCFCFC;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+    
+    .cart-item-image img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    
+    .cart-item-info { flex: 1; }
+    
+    .cart-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .cart-item-price {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    
+    .form-group { margin-bottom: 20px; }
+    
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      width: 100%;
+      padding: 16px;
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    
+    .status-screen {
+      text-align: center;
+      padding: 40px 24px;
+    }
+    
+    .loading-animation {
+      margin: 0 auto 24px;
+      width: 80px;
+      height: 80px;
+    }
+    
+    .spinner {
+      width: 80px;
+      height: 80px;
+      border: 4px solid var(--bg);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .status-icon {
+      font-size: 72px;
+      margin-bottom: 20px;
+      animation: bounceIn 0.6s;
+    }
+    
+    @keyframes bounceIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    .status-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .status-subtitle {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 8px 20px;
+      background: var(--bg);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+    
+    .order-summary {
+      background: var(--bg);
+      padding: 20px;
+      border-radius: 16px;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    
+    .summary-row.total {
+      font-size: 18px;
+      font-weight: 700;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .whatsapp-notification {
+      background: #E8F5E9;
+      color: #2E7D32;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 20px 0;
+      border: 1px solid #81C784;
+    }
+    
+    .eta-box {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 20px 0;
+    }
+    
+    .enjoy-message {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 24px 0;
+      padding: 20px;
+      background: #FFF4E6;
+      border-radius: 12px;
+    }
+    
+    .custom-confirm {
+      padding: 30px 24px;
+      text-align: center;
+    }
+    
+    .confirm-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .confirm-message {
+      font-size: 14px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .confirm-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .confirm-btn.cancel {
+      background: var(--bg);
+      color: var(--text);
+      border: none;
+    }
+    
+    .confirm-btn.ok {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="header">
+    <div class="logo">MyHotel</div>
+    <div class="tagline">Delicious • Fresh • Fast</div>
+    <div class="table-info">
+      <span>🪑</span>
+      <span id="tableNumber">Table 5</span>
+    </div>
+  </div>
+  
+  <div class="search-container">
+    <div class="search-box">
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="7"/><path d="m13 13 6 6"/></svg>
+      <input type="text" class="search-input" placeholder="Search dishes..." id="searchInput">
+    </div>
+  </div>
+  
+  <div class="filters">
+    <button class="filter-chip active" onclick="filterMenu('all')">All</button>
+    <button class="filter-chip" onclick="filterMenu('main')">Main Course</button>
+    <button class="filter-chip" onclick="filterMenu('appetizers')">Appetizers</button>
+    <button class="filter-chip" onclick="filterMenu('breads')">Breads</button>
+    <button class="filter-chip" onclick="filterMenu('beverages')">Beverages</button>
+    <button class="filter-chip" onclick="filterMenu('desserts')">Desserts</button>
+  </div>
+  
+  <div class="menu-grid" id="menuGrid"></div>
+  
+  <div class="cart-bar" id="cartBar">
+    <div class="cart-details">
+      <div class="cart-count" id="cartCount">0 items</div>
+      <div class="cart-total" id="cartTotal">₹0</div>
+    </div>
+    <button class="view-cart-button" onclick="showStep(1)">View Cart →</button>
+  </div>
+  
+  <div class="social-buttons">
+    <a href="https://instagram.com/yourrestaurant" target="_blank" class="social-btn instagram" id="instagramLink">
+      <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+        <path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+    <a href="https://g.page/r/YOUR_REVIEW_ID/review" target="_blank" class="social-btn google" id="googleLink">
+      <svg width="24" height="24" viewBox="0 0 24 24">
+        <path fill="#D4A373" d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+      </svg>
+    </a>
+  </div>
+  
+  <div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal"></div>
+  </div>
+  
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxODoJTFnGTRMSUAHPRJaFq8U_IsWqhwDpyX7m3g6f3PLczfKSQHjfP-wCAqhnIseIr/exec';
+    const OWNER_WHATSAPP = '917404787308';
+    const RESTAURANT_NAME = 'MyHotel';
+    const INSTAGRAM_URL = 'https://instagram.com/yourrestaurant';
+    const GOOGLE_REVIEW_URL = 'https://g.page/r/YOUR_REVIEW_ID/review';
+    
+    document.getElementById('instagramLink').href = INSTAGRAM_URL;
+    document.getElementById('googleLink').href = GOOGLE_REVIEW_URL;
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const tableNum = urlParams.get('table') || '5';
+    document.getElementById('tableNumber').textContent = `Table ${tableNum}`;
+    
+    const MENU = [
+      {id:'1', name:'Paneer Tikka Masala', category:'main', price:280, image:'panir-tika-masala.png', type:'veg', rating:4.8, time:25, popular:true},
+      {id:'2', name:'Dal Makhani', category:'main', price:220, image:'dal-makhni.png', type:'veg', rating:4.7, time:30, popular:false},
+      {id:'3', name:'Garlic Naan', category:'breads', price:70, image:'garlic-naan.png', type:'veg', rating:4.6, time:10, popular:false},
+      {id:'4', name:'Steamed Dim Sum', category:'appetizers', price:180, image:'dimsim.png', type:'veg', rating:4.9, time:15, popular:false},
+      {id:'5', name:'Red Sauce Pasta', category:'main', price:240, image:'pasta.png', type:'veg', rating:4.5, time:20, popular:true},
+      {id:'6', name:'White Sauce Pasta', category:'main', price:260, image:'white-souce-pasta.png', type:'veg', rating:4.6, time:20, popular:false},
+      {id:'7', name:'Belgian Waffle', category:'desserts', price:180, image:'waffel.png', type:'veg', rating:4.8, time:15, popular:false},
+      {id:'8', name:'Cappuccino', category:'beverages', price:120, image:'coffee.png', type:'veg', rating:4.7, time:5, popular:false},
+      {id:'9', name:'Gulab Jamun', category:'desserts', price:90, image:'gulabjamun.png', type:'veg', rating:4.9, time:5, popular:false}
+    ];
+    
+    let cart = [];
+    let currentStep = 0;
+    let orderPlaced = false;
+    let orderId = '';
+    let pollingInterval;
+    let currentFilter = 'all';
+    
+    function renderMenu(filter = 'all') {
+      const grid = document.getElementById('menuGrid');
+      const filtered = filter === 'all' ? MENU : MENU.filter(item => item.category === filter);
+      
+      grid.innerHTML = filtered.map(item => {
+        const cartItem = cart.find(c => c.id === item.id);
+        const qty = cartItem ? cartItem.qty : 0;
+        
+        return `
+          <div class="dish-card" data-dish-id="${item.id}">
+            <div class="dish-image-wrapper">
+              <div class="veg-badge ${item.type}"></div>
+              <img src="${item.image}" alt="${item.name}" class="dish-image">
+            </div>
+            <div class="dish-info">
+              ${item.popular ? '<span class="tag popular">Popular</span>' : ''}
+              <div class="dish-name">${item.name}</div>
+              <div class="dish-meta">
+                <span class="rating">⭐ ${item.rating}</span>
+                <span>•</span>
+                <span>${item.time} min</span>
+              </div>
+              <div class="dish-footer">
+                <div class="dish-price">₹${item.price}</div>
+                ${qty === 0 ? 
+                  `<button class="add-button" onclick="addToCart('${item.id}')">+ Add</button>` :
+                  `<div class="qty-controls">
+                    <button class="qty-btn" onclick="decreaseQty('${item.id}')">-</button>
+                    <div class="qty-number" data-qty-display="${item.id}">${qty}</div>
+                    <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
+                  </div>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function addToCart(id) {
+      const item = MENU.find(m => m.id === id);
+      cart.push({...item, qty: 1});
+      updateCart();
+      updateMenuQuantities();
+    }
+    
+    function increaseQty(id) {
+      const item = cart.find(c => c.id === id);
+      if (item) item.qty++;
+      updateCart();
+      updateMenuQuantities();
+    }
+    
+    function decreaseQty(id) {
+      const item = cart.find(c => c.id === id);
+      if (item) {
+        item.qty--;
+        if (item.qty === 0) cart = cart.filter(c => c.id !== id);
+      }
+      updateCart();
+      updateMenuQuantities();
+    }
+    
+    // FIX #1: Update quantity displays and button visibility
+    function updateMenuQuantities() {
+      MENU.forEach(menuItem => {
+        const cartItem = cart.find(c => c.id === menuItem.id);
+        const qty = cartItem ? cartItem.qty : 0;
+        
+        // Find the dish card
+        const dishCard = document.querySelector(`[data-dish-id="${menuItem.id}"]`);
+        if (!dishCard) return;
+        
+        // Find the footer where buttons are
+        const footer = dishCard.querySelector('.dish-footer');
+        if (!footer) return;
+        
+        // Update the button HTML based on quantity
+        const priceHtml = `<div class="dish-price">₹${menuItem.price}</div>`;
+        
+        if (qty === 0) {
+          // Show Add button
+          footer.innerHTML = priceHtml + `<button class="add-button" onclick="addToCart('${menuItem.id}')">+ Add</button>`;
+        } else {
+          // Show quantity controls
+          footer.innerHTML = priceHtml + `
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="decreaseQty('${menuItem.id}')">-</button>
+              <div class="qty-number" data-qty-display="${menuItem.id}">${qty}</div>
+              <button class="qty-btn" onclick="increaseQty('${menuItem.id}')">+</button>
+            </div>
+          `;
+        }
+      });
+    }
+    
+    function updateCart() {
+      const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      document.getElementById('cartCount').textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+      document.getElementById('cartTotal').textContent = `₹${totalPrice}`;
+      
+      document.getElementById('cartBar').classList.toggle('show', totalItems > 0);
+      
+      // Only re-render if items were added/removed (not just qty changed)
+      const currentIds = cart.map(c => c.id).sort().join(',');
+      if (window.lastCartIds !== currentIds) {
+        window.lastCartIds = currentIds;
+        renderMenu(currentFilter);
+      }
+    }
+    
+    function filterMenu(category) {
+      currentFilter = category;
+      document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderMenu(category);
+    }
+    
+    function showStep(step) {
+      currentStep = step;
+      const overlay = document.getElementById('modalOverlay');
+      const modal = document.getElementById('modal');
+      
+      overlay.classList.add('show');
+      
+      if (step === 1) {
+        overlay.classList.remove('center');
+        modal.classList.remove('center-modal');
+        showCartReview();
+      } else if (step === 2) {
+        overlay.classList.remove('center');
+        modal.classList.remove('center-modal');
+        showCustomerDetails();
+      }
+    }
+    
+    function showCustomConfirm(message, onConfirm) {
+      const overlay = document.getElementById('modalOverlay');
+      const modal = document.getElementById('modal');
+      
+      overlay.classList.add('show', 'center');
+      modal.classList.add('center-modal');
+      
+      modal.innerHTML = `
+        <div class="custom-confirm">
+          <div class="confirm-title">Order Already Placed</div>
+          <div class="confirm-message">${message}</div>
+          <div class="confirm-buttons">
+            <button class="confirm-btn cancel" onclick="closeCustomConfirm()">Cancel</button>
+            <button class="confirm-btn ok" onclick="confirmAction()">OK</button>
+          </div>
+        </div>
+      `;
+      
+      window.confirmCallback = onConfirm;
+    }
+    
+    function closeCustomConfirm() {
+      document.getElementById('modalOverlay').classList.remove('show');
+      delete window.confirmCallback;
+    }
+    
+    function confirmAction() {
+      if (window.confirmCallback) {
+        window.confirmCallback();
+      }
+      closeCustomConfirm();
+    }
+    
+    function closeModal() {
+      if (orderPlaced && currentStep === 3) {
+        showCustomConfirm('Your order is already placed. Do you want to close this and order something else?', () => {
+          document.getElementById('modalOverlay').classList.remove('show');
+          orderPlaced = false;
+          if (pollingInterval) clearInterval(pollingInterval);
+        });
+      } else {
+        document.getElementById('modalOverlay').classList.remove('show');
+      }
+    }
+    
+    function handleOverlayClick(event) {
+      if (event.target === document.getElementById('modalOverlay')) {
+        closeModal();
+      }
+    }
+    
+    window.addEventListener('popstate', function(event) {
+      if (orderPlaced) {
+        showCustomConfirm('Your order is already placed. Do you want to go back and order something else?', () => {
+          closeModal();
+        });
+        window.history.pushState(null, null, window.location.href);
+      }
+    });
+    
+    function showCartReview() {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      document.getElementById('modal').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-header">
+          <div class="modal-title">Your Order</div>
+        </div>
+        <div class="modal-body">
+          ${cart.map(item => `
+            <div class="cart-item">
+              <div class="cart-item-image">
+                <img src="${item.image}" alt="${item.name}">
+              </div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">₹${item.price} × ${item.qty}</div>
+                <div class="qty-controls">
+                  <button class="qty-btn" onclick="decreaseQty('${item.id}'); showCartReview();">-</button>
+                  <div class="qty-number">${item.qty}</div>
+                  <button class="qty-btn" onclick="increaseQty('${item.id}'); showCartReview();">+</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+          
+          <div class="order-summary">
+            <div class="summary-row total">
+              <span>Total</span>
+              <span>₹${total}</span>
+            </div>
+          </div>
+          
+          <button class="btn-primary" onclick="showStep(2)">Continue →</button>
+        </div>
+      `;
+    }
+    
+    function showCustomerDetails() {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      
+      document.getElementById('modal').innerHTML = `
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div class="modal-header">
+          <div class="modal-title">Your Details</div>
+        </div>
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" id="customerName" placeholder="Enter your name" autocomplete="name">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" id="customerPhone" placeholder="10-digit mobile number" maxlength="10" autocomplete="tel">
+          </div>
+          
+          <button class="btn-primary" onclick="placeOrder()" id="placeOrderBtn">Place Order - ₹${total}</button>
+        </div>
+      `;
+    }
+    
+    async function placeOrder() {
+      const customerName = document.getElementById('customerName').value.trim();
+      const customerPhone = document.getElementById('customerPhone').value.trim();
+      
+      if (!customerName || !customerPhone) {
+        alert('Please fill all details');
+        return;
+      }
+      
+      if (customerPhone.length !== 10 || !/^\d+$/.test(customerPhone)) {
+        alert('Please enter valid 10-digit phone number');
+        return;
+      }
+      
+      document.getElementById('placeOrderBtn').disabled = true;
+      document.getElementById('placeOrderBtn').textContent = 'Placing Order...';
+      
+      orderId = 'ORD' + Date.now();
+      
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const items = cart.map(item => `${item.name} x${item.qty}`).join(', ');
+      
+      const orderData = {
+        orderId,
+        name: customerName,
+        phone: customerPhone,
+        table: tableNum,
+        items,
+        total,
+        time: new Date().toLocaleString('en-IN'),
+        status: 'pending',
+        eta: '',
+        payment: 'cash'
+      };
+      
+      try {
+        const params = new URLSearchParams(orderData);
+        
+        await fetch(SHEET_URL + '?' + params.toString(), {
+          method: 'GET',
+          mode: 'no-cors'
+        });
+        
+        orderPlaced = true;
+        window.history.pushState(null, null, window.location.href);
+        
+        showWaitingScreen(customerName, customerPhone);
+        startStatusPolling(orderId);
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error placing order. Please try again.');
+        document.getElementById('placeOrderBtn').disabled = false;
+        document.getElementById('placeOrderBtn').textContent = 'Place Order - ₹' + total;
+      }
+    }
+    
+    function showWaitingScreen(customerName, customerPhone) {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      
+      const overlay = document.getElementById('modalOverlay');
+      const modal = document.getElementById('modal');
+      
+      overlay.classList.add('show', 'center');
+      modal.classList.add('center-modal');
+      
+      modal.innerHTML = `
+        <div class="status-screen">
+          <div class="loading-animation">
+            <div class="spinner"></div>
+          </div>
+          <div class="status-title">Processing Your Order</div>
+          <div class="status-badge">Order ID: ${orderId}</div>
+          <div class="status-subtitle">
+            Please wait while we confirm your order...
+          </div>
+          
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Table</span>
+              <span>${tableNum}</span>
+            </div>
+            <div class="summary-row">
+              <span>Items</span>
+              <span>${itemCount}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span>₹${total}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function startStatusPolling(orderId) {
+      pollingInterval = setInterval(async () => {
+        try {
+          const response = await fetch(SHEET_URL + '?action=getStatus&orderId=' + orderId);
+          const data = await response.json();
+          
+          if (data.result === 'success') {
+            if (data.status === 'accepted' || data.status === 'preparing') {
+              clearInterval(pollingInterval);
+              showConfirmedScreen(data.eta);
+            } else if (data.status === 'ready') {
+              clearInterval(pollingInterval);
+              showReadyScreen();
+            }
+          }
+        } catch (error) {
+          console.error('Status polling error:', error);
+        }
+      }, 3000);
+    }
+    
+    function showConfirmedScreen(eta) {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      
+      document.getElementById('modal').innerHTML = `
+        <button class="modal-close" onclick="closeModalAfterOrder()">✕</button>
+        <div class="status-screen">
+          <div class="status-icon">✅</div>
+          <div class="status-title">Order Confirmed!</div>
+          <div class="status-subtitle">
+            Your order has been accepted by the kitchen
+          </div>
+          
+          <div class="whatsapp-notification">
+            📱 WhatsApp confirmation sent to your number
+          </div>
+          
+          <div class="eta-box">
+            ⏱️ Estimated time: ${eta || '15-20 minutes'}
+          </div>
+          
+          <div class="order-summary">
+            <div class="summary-row">
+              <span>Table</span>
+              <span>${tableNum}</span>
+            </div>
+            <div class="summary-row">
+              <span>Items</span>
+              <span>${itemCount}</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <span>₹${total}</span>
+            </div>
+          </div>
+          
+          <button class="btn-secondary" onclick="closeModalAfterOrder()">Close</button>
+        </div>
+      `;
+    }
+    
+    function showReadyScreen() {
+      document.getElementById('modal').innerHTML = `
+        <button class="modal-close" onclick="closeModalAfterOrder()">✕</button>
+        <div class="status-screen">
+          <div class="status-icon">🍽️</div>
+          <div class="status-title">Your Food is Ready!</div>
+          <div class="status-subtitle">
+            Our staff will serve you shortly
+          </div>
+          
+          <div class="enjoy-message">
+            Enjoy your meal! 😊
+          </div>
+          
+          <button class="btn-secondary" onclick="closeModalAfterOrder()">Close</button>
+        </div>
+      `;
+    }
+    
+    function closeModalAfterOrder() {
+      if (pollingInterval) {
+        clearInterval(pollingInterval);
+      }
+      document.getElementById('modalOverlay').classList.remove('show');
+      orderPlaced = false;
+      cart = [];
+      updateCart();
+    }
+    
+    renderMenu();
+  </script>
+  
+</body>
+</html>

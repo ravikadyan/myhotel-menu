@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyHotel - Owner Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #1A1A1A;
+      --accent: #D4A373;
+      --bg: #F5F5F5;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --text-light: #6B6B6B;
+      --border: #E0E0E0;
+      --success: #10B981;
+      --success-light: #D1FAE5;
+      --danger: #EF4444;
+      --danger-light: #FEE2E2;
+      --warning: #F59E0B;
+      --warning-light: #FEF3C7;
+      --info: #3B82F6;
+      --info-light: #DBEAFE;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header-left h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .header-left .subtitle {
+      font-size: 13px;
+      opacity: 0.8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .header-stats {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      color: var(--accent);
+    }
+    
+    .stat-label {
+      font-size: 11px;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+    
+    .refresh-btn {
+      background: var(--accent);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .refresh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
+    }
+    
+    /* Date Picker Controls */
+    .date-controls {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 20px;
+    }
+    
+    .date-picker-bar {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 2px solid var(--border);
+    }
+    
+    .date-quick-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    
+    .date-btn {
+      padding: 10px 18px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .date-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .date-btn:hover:not(.active) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
+    .date-picker-input {
+      padding: 10px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      background: white;
+      min-width: 180px;
+    }
+    
+    .date-picker-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      max-width: 400px;
+    }
+    
+    .search-input {
+      flex: 1;
+      padding: 10px 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+    }
+    
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .search-btn {
+      padding: 10px 20px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    .archive-btn {
+      padding: 10px 20px;
+      background: var(--info);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    
+    /* Date Info Bar */
+    .date-info-bar {
+      background: white;
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid var(--border);
+    }
+    
+    .date-info-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .date-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .date-badge {
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .date-badge.today {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    
+    .date-badge.yesterday {
+      background: var(--info-light);
+      color: var(--info);
+    }
+    
+    .date-badge.archive {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    
+    .date-stats-bar {
+      display: flex;
+      gap: 24px;
+    }
+    
+    .date-stat-item {
+      text-align: center;
+    }
+    
+    .date-stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .date-stat-label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+    }
+    
+    /* Filters */
+    .filters {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+    
+    .filter-chip {
+      flex-shrink: 0;
+      padding: 10px 20px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    
+    .filter-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .filter-chip .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      margin-left: 8px;
+      font-weight: 700;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-light);
+    }
+    
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .empty-state h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    
+    .empty-state p {
+      font-size: 14px;
+    }
+    
+    .orders-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .order-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      border: 2px solid var(--border);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .order-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+    
+    .order-card.pending::before { background: var(--warning); }
+    .order-card.preparing::before { background: var(--info); }
+    .order-card.ready::before { background: var(--success); }
+    
+    .order-card:hover {
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+    
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--accent);
+    }
+    
+    .order-id {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .order-time {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    .table-badge {
+      background: var(--accent);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(212, 163, 115, 0.3);
+    }
+    
+    .order-customer {
+      background: var(--bg);
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .customer-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .customer-phone {
+      font-size: 13px;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .order-items {
+      margin-bottom: 16px;
+    }
+    
+    .order-items-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .items-list {
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .total-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .total-amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+    }
+    
+    .status-badge.pending {
+      background: var(--warning-light);
+      color: var(--warning);
+    }
+    
+    .status-badge.preparing {
+      background: var(--info-light);
+      color: var(--info);
+    }
+    
+    .status-badge.ready {
+      background: var(--success-light);
+      color: var(--success);
+    }
+    
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    
+    .action-buttons.single {
+      grid-template-columns: 1fr;
+    }
+    
+    .btn {
+      padding: 14px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .btn:active {
+      transform: scale(0.98);
+    }
+    
+    .btn-accept {
+      background: var(--success);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+    
+    .btn-accept:hover {
+      background: #059669;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-reject {
+      background: white;
+      color: var(--danger);
+      border: 2px solid var(--danger);
+    }
+    
+    .btn-reject:hover {
+      background: var(--danger);
+      color: white;
+    }
+    
+    .btn-ready {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 4px 12px rgba(212, 163, 115, 0.2);
+    }
+    
+    .btn-ready:hover {
+      background: #C4936B;
+      box-shadow: 0 6px 16px rgba(212, 163, 115, 0.3);
+    }
+    
+    .btn-complete {
+      background: white;
+      color: var(--success);
+      border: 2px solid var(--success);
+    }
+    
+    .btn-complete:hover {
+      background: var(--success);
+      color: white;
+    }
+    
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .login-box {
+      background: white;
+      padding: 48px 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .login-subtitle {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    
+    .pin-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 24px;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 8px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    
+    .error-message {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .orders-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-stats {
+        display: none;
+      }
+      
+      .date-picker-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .search-box {
+        max-width: 100%;
+      }
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .order-card {
+      animation: slideIn 0.3s ease-out;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-light);
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <div class="login-title">MyHotel</div>
+      <div class="login-subtitle">Owner Dashboard</div>
+      <input 
+        type="password" 
+        class="pin-input" 
+        id="pinInput" 
+        placeholder="••••" 
+        maxlength="4"
+        inputmode="numeric"
+      >
+      <button class="login-btn" onclick="checkPIN()">Access Dashboard</button>
+      <div class="error-message" id="errorMessage">Incorrect PIN. Please try again.</div>
+    </div>
+  </div>
+  
+  <div id="dashboard" style="display: none;">
+    
+    <div class="header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1>MyHotel</h1>
+          <div class="subtitle">Owner Dashboard</div>
+        </div>
+        <div class="header-stats">
+          <div class="stat-item">
+            <div class="stat-number" id="totalOrders">0</div>
+            <div class="stat-label">Orders</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number" id="totalRevenue">₹0</div>
+            <div class="stat-label">Revenue</div>
+          </div>
+          <button class="refresh-btn" onclick="loadOrders()">🔄 Refresh</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="date-controls">
+      <div class="date-picker-bar">
+        <div class="date-quick-buttons">
+          <button class="date-btn active" onclick="selectDateRange('today')" data-range="today">📅 Today</button>
+          <button class="date-btn" onclick="selectDateRange('yesterday')" data-range="yesterday">⏮️ Yesterday</button>
+          <button class="date-btn" onclick="selectDateRange('last7')" data-range="last7">📊 Last 7 Days</button>
+          <button class="date-btn" onclick="selectDateRange('last30')" data-range="last30">📈 Last 30 Days</button>
+        </div>
+        
+        <input type="date" class="date-picker-input" id="datePicker" onchange="selectCustomDate()">
+        
+        <div class="search-box">
+          <input type="text" class="search-input" id="searchInput" placeholder="Order ID or Phone">
+          <button class="search-btn" onclick="searchOrders()">🔍 Search</button>
+        </div>
+        
+        <button class="archive-btn" onclick="viewArchives()">🗄️ Archives</button>
+      </div>
+      
+      <div class="date-info-bar">
+        <div class="date-info-left">
+          <div class="date-label" id="dateLabel">Today</div>
+          <div class="date-badge today" id="dateBadge">Today</div>
+        </div>
+        <div class="date-stats-bar">
+          <div class="date-stat-item">
+            <div class="date-stat-number" id="dateOrders">0</div>
+            <div class="date-stat-label">Orders</div>
+          </div>
+          <div class="date-stat-item">
+            <div class="date-stat-number" id="dateRevenue">₹0</div>
+            <div class="date-stat-label">Revenue</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="filters">
+      <button class="filter-chip active" onclick="filterOrders('all')" data-filter="all">
+        All Orders <span class="badge" id="badge-all">0</span>
+      </button>
+      <button class="filter-chip" onclick="filterOrders('pending')" data-filter="pending">
+        🟡 Pending <span class="badge" id="badge-pending">0</span>
+      </button>
+      <button class="filter-chip" onclick="filterOrders('preparing')" data-filter="preparing">
+        🔵 Preparing <span class="badge" id="badge-preparing">0</span>
+      </button>
+      <button class="filter-chip" onclick="filterOrders('ready')" data-filter="ready">
+        🟢 Ready <span class="badge" id="badge-ready">0</span>
+      </button>
+    </div>
+    
+    <div class="container">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <div>Loading orders...</div>
+      </div>
+      
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state-icon">📋</div>
+        <h3>No Orders Found</h3>
+        <p>No orders for the selected date range</p>
+      </div>
+      
+      <div class="orders-grid" id="ordersGrid"></div>
+    </div>
+    
+  </div>
+  
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxODoJTFnGTRMSUAHPRJaFq8U_IsWqhwDpyX7m3g6f3PLczfKSQHjfP-wCAqhnIseIr/exec';
+    const OWNER_WHATSAPP = '917404787308';
+    const RESTAURANT_NAME = 'MyHotel';
+    const PIN_CODE = '1234';
+    
+    let allOrders = [];
+    let currentFilter = 'all';
+    let currentDateRange = 'today';
+    let selectedDate = null;
+    let autoRefreshInterval;
+    
+    // PIN Authentication
+    function checkPIN() {
+      const input = document.getElementById('pinInput').value;
+      const error = document.getElementById('errorMessage');
+      
+      if (input === PIN_CODE) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        initializeDashboard();
+      } else {
+        error.classList.add('show');
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const pinInput = document.getElementById('pinInput');
+      if (pinInput) {
+        pinInput.focus();
+        pinInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') checkPIN();
+        });
+      }
+      
+      // Set today's date in date picker
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('datePicker').value = today;
+      document.getElementById('datePicker').max = today;
+    });
+    
+    function initializeDashboard() {
+      loadOrders();
+      startAutoRefresh();
+    }
+    
+    // Date Range Selection
+    function selectDateRange(range) {
+      currentDateRange = range;
+      selectedDate = null;
+      
+      // Update active button
+      document.querySelectorAll('.date-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-range="${range}"]`).classList.add('active');
+      
+      loadOrders();
+    }
+    
+    function selectCustomDate() {
+      const dateInput = document.getElementById('datePicker');
+      selectedDate = dateInput.value;
+      currentDateRange = 'custom';
+      
+      // Deactivate all quick buttons
+      document.querySelectorAll('.date-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      loadOrders();
+    }
+    
+    // Load Orders with Date Filtering
+    async function loadOrders(silent = false) {
+      try {
+        if (!silent) {
+          document.getElementById('loading').style.display = 'block';
+        }
+        
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+        
+        if (data.result === 'success' && data.data) {
+          allOrders = data.data.slice(1).map(row => ({
+            orderId: row[0],
+            name: row[1],
+            phone: row[2],
+            table: row[3],
+            items: row[4],
+            total: row[5],
+            time: row[6],
+            status: row[7] || 'pending',
+            eta: row[8] || '',
+            payment: row[9] || 'cash'
+          })).filter(order => order.orderId).reverse();
+          
+          filterByDateRange();
+          updateStats();
+          renderOrders();
+        }
+        
+        if (!silent) {
+          document.getElementById('loading').style.display = 'none';
+        }
+        
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        if (!silent) {
+          document.getElementById('loading').style.display = 'none';
+        }
+      }
+    }
+    
+    // Filter orders by selected date range
+    function filterByDateRange() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      const last7Start = new Date(today);
+      last7Start.setDate(last7Start.getDate() - 6);
+      
+      const last30Start = new Date(today);
+      last30Start.setDate(last30Start.getDate() - 29);
+      
+      allOrders = allOrders.filter(order => {
+        const orderDate = parseOrderDate(order.time);
+        
+        switch(currentDateRange) {
+          case 'today':
+            updateDateLabel('Today', 'today', 'Today');
+            return isSameDay(orderDate, today);
+            
+          case 'yesterday':
+            updateDateLabel('Yesterday', 'yesterday', 'Yesterday');
+            return isSameDay(orderDate, yesterday);
+            
+          case 'last7':
+            updateDateLabel('Last 7 Days', 'archive', 'Last 7 Days');
+            return orderDate >= last7Start && orderDate <= today;
+            
+          case 'last30':
+            updateDateLabel('Last 30 Days', 'archive', 'Last 30 Days');
+            return orderDate >= last30Start && orderDate <= today;
+            
+          case 'custom':
+            if (selectedDate) {
+              const selected = new Date(selectedDate);
+              selected.setHours(0, 0, 0, 0);
+              const dateLabel = formatDateLabel(selected);
+              const badge = getDateBadgeType(selected);
+              updateDateLabel(dateLabel, badge, formatShortDate(selected));
+              return isSameDay(orderDate, selected);
+            }
+            return true;
+            
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Parse order date from timestamp
+    function parseOrderDate(timeString) {
+      const parts = timeString.split(',')[0].trim();
+      const [day, month, year] = parts.split('/');
+      const date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+    
+    function isSameDay(date1, date2) {
+      return date1.getFullYear() === date2.getFullYear() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getDate() === date2.getDate();
+    }
+    
+    function formatDateLabel(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      if (isSameDay(date, today)) {
+        return 'Today';
+      } else if (isSameDay(date, yesterday)) {
+        return 'Yesterday';
+      } else {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('en-IN', options);
+      }
+    }
+    
+    function getDateBadgeType(date) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      if (isSameDay(date, today)) {
+        return 'today';
+      } else if (isSameDay(date, yesterday)) {
+        return 'yesterday';
+      } else {
+        return 'archive';
+      }
+    }
+    
+    function formatShortDate(date) {
+      const options = { month: 'short', day: 'numeric' };
+      return date.toLocaleDateString('en-IN', options);
+    }
+    
+    function updateDateLabel(label, badgeType, badgeText) {
+      document.getElementById('dateLabel').textContent = label;
+      const badge = document.getElementById('dateBadge');
+      badge.textContent = badgeText;
+      badge.className = 'date-badge ' + badgeType;
+    }
+    
+    // Search Orders
+    function searchOrders() {
+      const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+      
+      if (!searchTerm) {
+        alert('Please enter Order ID or Phone Number');
+        return;
+      }
+      
+      const results = allOrders.filter(order => 
+        order.orderId.toLowerCase().includes(searchTerm) ||
+        order.phone.includes(searchTerm)
+      );
+      
+      if (results.length === 0) {
+        alert('No orders found for: ' + searchTerm);
+        return;
+      }
+      
+      // Display search results
+      currentFilter = 'all';
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector('[data-filter="all"]').classList.add('active');
+      
+      allOrders = results;
+      updateStats();
+      renderOrders();
+    }
+    
+    // View Archives
+    function viewArchives() {
+      alert('Archive Viewer\n\nComing Soon!\n\nYou can view archived orders by:\n1. Selecting a date from the calendar\n2. Using "Last 30 Days" to see older orders\n\nAll orders are automatically archived after 30 days but remain searchable.');
+    }
+    
+    // Update Statistics
+    function updateStats() {
+      const activeOrders = allOrders.filter(o => 
+        o.status !== 'rejected' && 
+        o.status !== 'cancelled' && 
+        o.status !== 'completed'
+      );
+      
+      const totalOrders = allOrders.length;
+      const totalRevenue = activeOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+      
+      document.getElementById('totalOrders').textContent = totalOrders;
+      document.getElementById('totalRevenue').textContent = `₹${totalRevenue}`;
+      
+      document.getElementById('dateOrders').textContent = totalOrders;
+      document.getElementById('dateRevenue').textContent = `₹${totalRevenue}`;
+      
+      document.getElementById('badge-all').textContent = totalOrders;
+      document.getElementById('badge-pending').textContent = allOrders.filter(o => o.status === 'pending').length;
+      document.getElementById('badge-preparing').textContent = allOrders.filter(o => o.status === 'preparing' || o.status === 'accepted').length;
+      document.getElementById('badge-ready').textContent = allOrders.filter(o => o.status === 'ready').length;
+    }
+    
+    // Filter Orders by Status
+    function filterOrders(filter) {
+      currentFilter = filter;
+      
+      document.querySelectorAll('.filter-chip').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+      
+      renderOrders();
+    }
+    
+    // Render Orders
+    function renderOrders() {
+      const grid = document.getElementById('ordersGrid');
+      const emptyState = document.getElementById('emptyState');
+      
+      let filteredOrders = [...allOrders];
+      
+      if (currentFilter !== 'all') {
+        if (currentFilter === 'preparing') {
+          filteredOrders = allOrders.filter(o => o.status === 'preparing' || o.status === 'accepted');
+        } else {
+          filteredOrders = allOrders.filter(o => o.status === currentFilter);
+        }
+      }
+      
+      if (filteredOrders.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      grid.innerHTML = filteredOrders.map(order => `
+        <div class="order-card ${order.status}">
+          <div class="order-header">
+            <div>
+              <div class="order-id">${order.orderId}</div>
+              <div class="order-time">🕐 ${order.time}</div>
+            </div>
+            <div class="table-badge">🪑 Table ${order.table}</div>
+          </div>
+          
+          <div class="order-customer">
+            <div class="customer-name">
+              <span>👤</span>
+              <span>${order.name}</span>
+            </div>
+            <div class="customer-phone">
+              <span>📱</span>
+              <span>${order.phone}</span>
+            </div>
+          </div>
+          
+          <div class="status-badge ${order.status}">
+            ${order.status === 'pending' ? '⏳ Pending' : ''}
+            ${order.status === 'preparing' || order.status === 'accepted' ? '👨‍🍳 Preparing' : ''}
+            ${order.status === 'ready' ? '✅ Ready' : ''}
+          </div>
+          
+          <div class="order-items">
+            <div class="order-items-title">Items Ordered</div>
+            <div class="items-list">${order.items}</div>
+          </div>
+          
+          <div class="order-total">
+            <div class="total-label">Total Amount</div>
+            <div class="total-amount">₹${order.total}</div>
+          </div>
+          
+          <div class="action-buttons ${order.status === 'ready' ? 'single' : ''}">
+            ${order.status === 'pending' ? `
+              <button class="btn btn-accept" onclick="acceptOrder('${order.orderId}', '${order.phone}', '${order.name}', '${order.items}', '${order.total}')">
+                <span>✓</span> Accept Order
+              </button>
+              <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
+                <span>✕</span> Reject
+              </button>
+            ` : ''}
+            
+            ${order.status === 'preparing' || order.status === 'accepted' ? `
+              <button class="btn btn-ready" onclick="markReady('${order.orderId}')">
+                <span>✓</span> Mark Ready
+              </button>
+              <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
+                <span>✕</span> Cancel
+              </button>
+            ` : ''}
+            
+            ${order.status === 'ready' ? `
+              <button class="btn btn-complete" onclick="completeOrder('${order.orderId}')">
+                <span>✓</span> Complete Order
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Order Actions
+    async function acceptOrder(orderId, phone, name, items, total) {
+      try {
+        await updateOrderStatus(orderId, 'accepted', '15-20 minutes');
+        sendWhatsAppNotification(phone, name, orderId, items, total);
+        setTimeout(() => loadOrders(true), 500);
+      } catch (error) {
+        console.error('Error accepting order:', error);
+        alert('Error accepting order. Please try again.');
+      }
+    }
+    
+    async function markReady(orderId) {
+      try {
+        await updateOrderStatus(orderId, 'ready', '');
+        setTimeout(() => loadOrders(true), 500);
+      } catch (error) {
+        console.error('Error marking ready:', error);
+        alert('Error updating order. Please try again.');
+      }
+    }
+    
+    async function completeOrder(orderId) {
+      if (confirm('Mark this order as completed?')) {
+        try {
+          await updateOrderStatus(orderId, 'completed', '');
+          setTimeout(() => loadOrders(true), 500);
+        } catch (error) {
+          console.error('Error completing order:', error);
+        }
+      }
+    }
+    
+    async function rejectOrder(orderId) {
+      if (confirm('Are you sure you want to reject this order?')) {
+        try {
+          await updateOrderStatus(orderId, 'rejected', '');
+          setTimeout(() => loadOrders(true), 500);
+        } catch (error) {
+          console.error('Error rejecting order:', error);
+        }
+      }
+    }
+    
+    async function updateOrderStatus(orderId, status, eta) {
+      const updateData = {
+        action: 'updateStatus',
+        orderId: orderId,
+        status: status,
+        eta: eta || ''
+      };
+      
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updateData),
+        mode: 'no-cors'
+      });
+    }
+    
+    function sendWhatsAppNotification(phone, name, orderId, items, total) {
+      const message = `🎉 Order Confirmed - ${RESTAURANT_NAME}
+
+Hi ${name},
+
+Your order has been accepted!
+Order ID: ${orderId}
+
+Items:
+${items}
+
+Total: ₹${total}
+
+Your food will be ready in 15-20 minutes.
+
+Thank you for dining with us! 🍽️`;
+
+      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+      window.open(whatsappUrl, '_blank');
+    }
+    
+    // Auto-refresh (silent)
+    function startAutoRefresh() {
+      autoRefreshInterval = setInterval(() => {
+        if (currentDateRange === 'today') {
+          loadOrders(true);
+        }
+      }, 3000);
+    }
+    
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearInterval(autoRefreshInterval);
+      } else {
+        startAutoRefresh();
+      }
+    });
+  </script>
+  
+</body>
+</html>

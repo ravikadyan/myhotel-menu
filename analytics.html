@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyHotel - Analytics Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary: #1A1A1A;
+      --accent: #D4A373;
+      --bg: #F5F5F5;
+      --card: #FFFFFF;
+      --text: #1A1A1A;
+      --text-light: #6B6B6B;
+      --border: #E0E0E0;
+      --success: #10B981;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+      --info: #3B82F6;
+      --purple: #8B5CF6;
+      --pink: #EC4899;
+      --teal: #14B8A6;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 24px 20px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    
+    .header .subtitle {
+      font-size: 13px;
+      opacity: 0.8;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .refresh-btn {
+      background: var(--accent);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 40px 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .section-title::before {
+      content: '';
+      width: 4px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 4px;
+    }
+    
+    .period-selector {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    
+    .period-btn {
+      padding: 12px 24px;
+      border-radius: 100px;
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    
+    .period-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    
+    .stat-card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+    
+    .stat-card.success::before { background: var(--success); }
+    .stat-card.info::before { background: var(--info); }
+    .stat-card.warning::before { background: var(--warning); }
+    .stat-card.purple::before { background: var(--purple); }
+    .stat-card.pink::before { background: var(--pink); }
+    .stat-card.teal::before { background: var(--teal); }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    
+    .stat-icon.accent { background: rgba(212, 163, 115, 0.1); }
+    .stat-icon.success { background: rgba(16, 185, 129, 0.1); }
+    .stat-icon.info { background: rgba(59, 130, 246, 0.1); }
+    .stat-icon.warning { background: rgba(245, 158, 11, 0.1); }
+    .stat-icon.purple { background: rgba(139, 92, 246, 0.1); }
+    .stat-icon.pink { background: rgba(236, 72, 153, 0.1); }
+    .stat-icon.teal { background: rgba(20, 184, 166, 0.1); }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    
+    .stat-change {
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+    
+    .stat-change.up {
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--success);
+    }
+    
+    .stat-change.down {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+    }
+    
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .chart-card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+    }
+    
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+    
+    .chart-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .chart-container {
+      position: relative;
+      height: 300px;
+    }
+    
+    .chart-container.tall {
+      height: 400px;
+    }
+    
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+    
+    .insight-card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+    }
+    
+    .insight-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .item-list {
+      list-style: none;
+    }
+    
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .item-row:last-child {
+      border-bottom: none;
+    }
+    
+    .item-info {
+      flex: 1;
+    }
+    
+    .item-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .item-meta {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .item-stat {
+      text-align: right;
+    }
+    
+    .item-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .item-label {
+      font-size: 11px;
+      color: var(--text-light);
+      text-transform: uppercase;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 100px;
+      transition: width 0.3s;
+    }
+    
+    .hour-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+      gap: 8px;
+    }
+    
+    .hour-box {
+      background: var(--bg);
+      padding: 12px 8px;
+      border-radius: 12px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .hour-box.peak {
+      background: rgba(212, 163, 115, 0.1);
+      border-color: var(--accent);
+    }
+    
+    .hour-time {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      margin-bottom: 4px;
+    }
+    
+    .hour-orders {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .customer-card {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .customer-card:hover {
+      border-color: var(--accent);
+      background: white;
+    }
+    
+    .customer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .customer-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .customer-phone {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    
+    .customer-badge {
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    
+    .badge-vip {
+      background: rgba(212, 163, 115, 0.1);
+      color: var(--accent);
+    }
+    
+    .badge-loyal {
+      background: rgba(139, 92, 246, 0.1);
+      color: var(--purple);
+    }
+    
+    .badge-new {
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--info);
+    }
+    
+    .customer-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    
+    .customer-stat {
+      text-align: center;
+      padding: 8px;
+      background: white;
+      border-radius: 8px;
+    }
+    
+    .customer-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .customer-stat-label {
+      font-size: 10px;
+      color: var(--text-light);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    
+    .behavior-insight {
+      background: var(--bg);
+      padding: 16px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .behavior-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    
+    .behavior-icon.success { background: rgba(16, 185, 129, 0.1); }
+    .behavior-icon.info { background: rgba(59, 130, 246, 0.1); }
+    .behavior-icon.warning { background: rgba(245, 158, 11, 0.1); }
+    .behavior-icon.purple { background: rgba(139, 92, 246, 0.1); }
+    
+    .behavior-text h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .behavior-text p {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+    
+    .export-btn {
+      background: var(--info);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    
+    .login-box {
+      background: white;
+      padding: 48px 40px;
+      border-radius: 24px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    
+    .login-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    
+    .login-subtitle {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    
+    .pin-input {
+      width: 100%;
+      padding: 16px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 24px;
+      text-align: center;
+      font-weight: 700;
+      letter-spacing: 8px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    
+    .pin-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    
+    .error-message {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 12px;
+      display: none;
+    }
+    
+    .error-message.show {
+      display: block;
+    }
+    
+    @media (max-width: 768px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .stat-card, .chart-card, .insight-card {
+      animation: fadeIn 0.5s ease-out;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Login Screen -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-box">
+      <div class="login-title">MyHotel</div>
+      <div class="login-subtitle">Analytics Dashboard</div>
+      <input 
+        type="password" 
+        class="pin-input" 
+        id="pinInput" 
+        placeholder="••••" 
+        maxlength="4"
+        inputmode="numeric"
+      >
+      <button class="login-btn" onclick="checkPIN()">Access Analytics</button>
+      <div class="error-message" id="errorMessage">Incorrect PIN. Please try again.</div>
+    </div>
+  </div>
+  
+  <!-- Main Dashboard -->
+  <div id="dashboard" style="display: none;">
+    
+    <div class="header">
+      <div class="header-content">
+        <div>
+          <h1>MyHotel</h1>
+          <div class="subtitle">Analytics Dashboard</div>
+        </div>
+        <div class="header-actions">
+          <button class="refresh-btn" onclick="loadAnalytics()">🔄 Refresh Data</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="container">
+      
+      <!-- Period Selector -->
+      <div class="period-selector">
+        <button class="period-btn" onclick="changePeriod('today')" data-period="today">📅 Today</button>
+        <button class="period-btn active" onclick="changePeriod('week')" data-period="week">📊 This Week</button>
+        <button class="period-btn" onclick="changePeriod('month')" data-period="month">📈 This Month</button>
+        <button class="period-btn" onclick="changePeriod('all')" data-period="all">🗓️ All Time</button>
+      </div>
+      
+      <!-- Section: Business Overview -->
+      <div class="section-title">💼 Business Overview</div>
+      
+      <!-- Key Metrics -->
+      <div class="stats-grid">
+        
+        <div class="stat-card accent">
+          <div class="stat-icon accent">💰</div>
+          <div class="stat-value" id="totalRevenue">₹0</div>
+          <div class="stat-label">Total Revenue</div>
+          <span class="stat-change up">↗ +12% vs last week</span>
+        </div>
+        
+        <div class="stat-card success">
+          <div class="stat-icon success">📦</div>
+          <div class="stat-value" id="totalOrders">0</div>
+          <div class="stat-label">Total Orders</div>
+          <span class="stat-change up">↗ +8% vs last week</span>
+        </div>
+        
+        <div class="stat-card info">
+          <div class="stat-icon info">💳</div>
+          <div class="stat-value" id="avgOrderValue">₹0</div>
+          <div class="stat-label">Avg Order Value</div>
+          <span class="stat-change down">↘ -3% vs last week</span>
+        </div>
+        
+        <div class="stat-card warning">
+          <div class="stat-icon warning">👥</div>
+          <div class="stat-value" id="totalCustomers">0</div>
+          <div class="stat-label">Unique Customers</div>
+          <span class="stat-change up">↗ +15% vs last week</span>
+        </div>
+        
+        <div class="stat-card purple">
+          <div class="stat-icon purple">⭐</div>
+          <div class="stat-value" id="acceptanceRate">0%</div>
+          <div class="stat-label">Acceptance Rate</div>
+          <span class="stat-change up">↗ +5% vs last week</span>
+        </div>
+        
+        <div class="stat-card pink">
+          <div class="stat-icon pink">⏱️</div>
+          <div class="stat-value" id="avgPrepTime">0m</div>
+          <div class="stat-label">Avg Prep Time</div>
+          <span class="stat-change down">↘ -2 min vs last week</span>
+        </div>
+        
+      </div>
+      
+      <!-- Charts -->
+      <div class="charts-grid">
+        
+        <div class="chart-card full-width">
+          <div class="chart-title">📈 Revenue Trend</div>
+          <div class="chart-container tall">
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <div class="chart-title">🍽️ Orders by Category</div>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <div class="chart-title">📊 Order Status Distribution</div>
+          <div class="chart-container">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Section: Customer Behavior -->
+      <div class="section-title">👤 Customer Behavior Analytics</div>
+      
+      <!-- Customer Behavior Stats -->
+      <div class="stats-grid">
+        
+        <div class="stat-card teal">
+          <div class="stat-icon teal">🔄</div>
+          <div class="stat-value" id="repeatCustomers">0%</div>
+          <div class="stat-label">Repeat Customer Rate</div>
+          <span class="stat-change up">↗ +6% vs last month</span>
+        </div>
+        
+        <div class="stat-card purple">
+          <div class="stat-icon purple">⭐</div>
+          <div class="stat-value" id="avgFrequency">0</div>
+          <div class="stat-label">Avg Orders per Customer</div>
+          <span class="stat-change up">↗ +0.3 vs last month</span>
+        </div>
+        
+        <div class="stat-card info">
+          <div class="stat-icon info">📅</div>
+          <div class="stat-value" id="avgDaysBetween">0d</div>
+          <div class="stat-label">Avg Days Between Orders</div>
+          <span class="stat-change down">↘ -1 day (good!)</span>
+        </div>
+        
+        <div class="stat-card warning">
+          <div class="stat-icon warning">💰</div>
+          <div class="stat-value" id="customerLifetimeValue">₹0</div>
+          <div class="stat-label">Customer Lifetime Value</div>
+          <span class="stat-change up">↗ +18% vs last month</span>
+        </div>
+        
+      </div>
+      
+      <!-- Customer Segments Chart -->
+      <div class="charts-grid">
+        
+        <div class="chart-card">
+          <div class="chart-title">🎯 Customer Segments</div>
+          <div class="chart-container">
+            <canvas id="segmentChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <div class="chart-title">📅 Order Frequency Distribution</div>
+          <div class="chart-container">
+            <canvas id="frequencyChart"></canvas>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Customer Insights -->
+      <div class="insights-grid">
+        
+        <div class="insight-card">
+          <div class="insight-title">🏆 VIP Customers</div>
+          <div id="vipCustomers">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="insight-title">💡 Behavior Insights</div>
+          <div id="behaviorInsights">
+            <!-- Generated by JS -->
+          </div>
+        </div>
+        
+        <div class="insight-card">
+          <div class="insight-title">📊 Customer Preferences</div>
+          <ul class="item-list" id="customerPreferences">
+            <!-- Generated by JS -->
+          </ul>
+        </div>
+        
+      </div>
+      
+      <!-- Section: Product Performance -->
+      <div class="section-title">🍽️ Product Performance</div>
+      
+      <!-- Insights -->
+      <div class="insights-grid">
+        
+        <div class="insight-card">
+          <div class="insight-title">🔥 Top Selling Items</div>
+          <ul class="item-list">
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Paneer Tikka Masala</div>
+                <div class="item-meta">Main Course • ₹280</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 100%;"></div>
+                </div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">45</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Red Sauce Pasta</div>
+                <div class="item-meta">Main Course • ₹240</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 82%;"></div>
+                </div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">37</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Dal Makhani</div>
+                <div class="item-meta">Main Course • ₹220</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 71%;"></div>
+                </div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">32</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Belgian Waffle</div>
+                <div class="item-meta">Dessert • ₹180</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 62%;"></div>
+                </div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">28</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Garlic Naan</div>
+                <div class="item-meta">Bread • ₹70</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 53%;"></div>
+                </div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">24</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="insight-card">
+          <div class="insight-title">💰 Revenue by Item</div>
+          <ul class="item-list">
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Paneer Tikka Masala</div>
+                <div class="item-meta">45 orders × ₹280</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">₹12,600</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Red Sauce Pasta</div>
+                <div class="item-meta">37 orders × ₹240</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">₹8,880</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Dal Makhani</div>
+                <div class="item-meta">32 orders × ₹220</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">₹7,040</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">White Sauce Pasta</div>
+                <div class="item-meta">25 orders × ₹260</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">₹6,500</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Belgian Waffle</div>
+                <div class="item-meta">28 orders × ₹180</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">₹5,040</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="insight-card">
+          <div class="insight-title">🪑 Top Tables</div>
+          <ul class="item-list">
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Table 5</div>
+                <div class="item-meta">Premium location</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">18</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Table 3</div>
+                <div class="item-meta">Window seat</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">15</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+            <li class="item-row">
+              <div class="item-info">
+                <div class="item-name">Table 7</div>
+                <div class="item-meta">Corner booth</div>
+              </div>
+              <div class="item-stat">
+                <div class="item-value">12</div>
+                <div class="item-label">Orders</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+        
+      </div>
+      
+      <!-- Peak Hours -->
+      <div class="chart-card full-width">
+        <div class="chart-title">⏰ Peak Hours Analysis</div>
+        <div class="hour-grid" id="peakHours">
+          <!-- Generated by JS -->
+        </div>
+      </div>
+      
+      <!-- Export Section -->
+      <div style="text-align: center; margin-top: 40px;">
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+          <button class="export-btn" onclick="exportCustomerSegment('VIP')" style="background: var(--accent);">
+            👑 Export VIP Customers
+          </button>
+          <button class="export-btn" onclick="exportCustomerSegment('Loyal')" style="background: var(--purple);">
+            ⭐ Export Loyal Customers
+          </button>
+          <button class="export-btn" onclick="exportCustomerSegment('Repeat')" style="background: var(--info);">
+            🔄 Export Repeat Customers
+          </button>
+          <button class="export-btn" onclick="exportCustomerSegment('New')" style="background: var(--teal);">
+            🆕 Export New Customers
+          </button>
+        </div>
+        
+        <button class="export-btn" onclick="exportReport()" style="background: var(--primary); font-size: 16px; padding: 16px 32px;">
+          📊 Export Full Report (All Data)
+        </button>
+        
+        <div style="margin-top: 16px;">
+          <button class="export-btn" onclick="exportAllCustomers()" style="background: var(--success);">
+            👥 Export All Customer Profiles
+          </button>
+        </div>
+      </div>
+      
+    </div>
+    
+  </div>
+  
+  <script>
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxODoJTFnGTRMSUAHPRJaFq8U_IsWqhwDpyX7m3g6f3PLczfKSQHjfP-wCAqhnIseIr/exec';
+    const PIN_CODE = '1234';
+    
+    let currentPeriod = 'week';
+    let allOrders = [];
+    let customerData = {};
+    
+    // Charts
+    let revenueChart, categoryChart, statusChart, segmentChart, frequencyChart;
+    
+    // PIN Authentication
+    function checkPIN() {
+      const input = document.getElementById('pinInput').value;
+      const error = document.getElementById('errorMessage');
+      
+      if (input === PIN_CODE) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        initializeDashboard();
+      } else {
+        error.classList.add('show');
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
+      }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      const pinInput = document.getElementById('pinInput');
+      if (pinInput) {
+        pinInput.focus();
+        pinInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') checkPIN();
+        });
+      }
+    });
+    
+    function initializeDashboard() {
+      loadAnalytics();
+      renderPeakHours();
+    }
+    
+    async function loadAnalytics() {
+      try {
+        const response = await fetch(SHEET_URL);
+        const data = await response.json();
+        
+        if (data.result === 'success' && data.data) {
+          allOrders = data.data.slice(1).map(row => ({
+            orderId: row[0],
+            name: row[1],
+            phone: row[2],
+            table: row[3],
+            items: row[4],
+            total: parseFloat(row[5]) || 0,
+            time: row[6],
+            status: row[7] || 'pending',
+            eta: row[8] || '',
+            payment: row[9] || 'cash'
+          })).filter(order => order.orderId);
+          
+          analyzeCustomerBehavior();
+          updateStats();
+          updateCharts();
+          renderCustomerInsights();
+        }
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+        // Use mock data if fetch fails
+        useMockData();
+      }
+    }
+    
+    function useMockData() {
+      // Mock data for demonstration
+      allOrders = generateMockOrders();
+      analyzeCustomerBehavior();
+      updateStats();
+      updateCharts();
+      renderCustomerInsights();
+    }
+    
+    function generateMockOrders() {
+      const mockOrders = [];
+      const days = currentPeriod === 'today' ? 1 : currentPeriod === 'week' ? 7 : 30;
+      const mockPhones = ['9876543210', '9876543211', '9876543212', '9876543213', '9876543214'];
+      const mockNames = ['Rahul Kumar', 'Priya Sharma', 'Amit Patel', 'Sneha Gupta', 'Vikram Singh'];
+      
+      for (let i = 0; i < days * 15; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - Math.floor(i / 15));
+        const hour = 11 + Math.floor(Math.random() * 10);
+        const customerIndex = Math.floor(Math.random() * 5);
+        
+        mockOrders.push({
+          orderId: `ORD${Date.now() - i * 1000}`,
+          name: mockNames[customerIndex],
+          phone: mockPhones[customerIndex],
+          table: Math.floor(Math.random() * 10) + 1,
+          items: 'Mock Item',
+          total: Math.floor(Math.random() * 300) + 100,
+          time: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}, ${hour}:${Math.floor(Math.random() * 60)}:00`,
+          status: ['completed', 'completed', 'completed', 'rejected'][Math.floor(Math.random() * 4)],
+          payment: 'cash'
+        });
+      }
+      
+      return mockOrders;
+    }
+    
+    function analyzeCustomerBehavior() {
+      customerData = {};
+      
+      allOrders.forEach(order => {
+        if (!customerData[order.phone]) {
+          customerData[order.phone] = {
+            name: order.name,
+            phone: order.phone,
+            orders: [],
+            totalSpent: 0,
+            avgOrderValue: 0,
+            firstOrder: null,
+            lastOrder: null,
+            daysBetweenOrders: [],
+            favoriteItems: {},
+            favoriteTables: {}
+          };
+        }
+        
+        const customer = customerData[order.phone];
+        customer.orders.push(order);
+        customer.totalSpent += order.total;
+        
+        // Track dates
+        const orderDate = parseOrderDate(order.time);
+        if (!customer.firstOrder || orderDate < customer.firstOrder) {
+          customer.firstOrder = orderDate;
+        }
+        if (!customer.lastOrder || orderDate > customer.lastOrder) {
+          customer.lastOrder = orderDate;
+        }
+        
+        // Track favorite tables
+        customer.favoriteTables[order.table] = (customer.favoriteTables[order.table] || 0) + 1;
+      });
+      
+      // Calculate additional metrics
+      Object.values(customerData).forEach(customer => {
+        customer.avgOrderValue = customer.totalSpent / customer.orders.length;
+        customer.orderCount = customer.orders.length;
+        
+        // Calculate days between orders
+        if (customer.orders.length > 1) {
+          const sortedOrders = customer.orders.sort((a, b) => 
+            parseOrderDate(a.time) - parseOrderDate(b.time)
+          );
+          
+          for (let i = 1; i < sortedOrders.length; i++) {
+            const prevDate = parseOrderDate(sortedOrders[i-1].time);
+            const currDate = parseOrderDate(sortedOrders[i].time);
+            const daysDiff = Math.floor((currDate - prevDate) / (1000 * 60 * 60 * 24));
+            customer.daysBetweenOrders.push(daysDiff);
+          }
+        }
+        
+        // Find favorite table
+        customer.favoriteTable = Object.keys(customer.favoriteTables).reduce((a, b) => 
+          customer.favoriteTables[a] > customer.favoriteTables[b] ? a : b
+        );
+        
+        // Calculate average days between orders
+        if (customer.daysBetweenOrders.length > 0) {
+          customer.avgDaysBetween = customer.daysBetweenOrders.reduce((a, b) => a + b, 0) / customer.daysBetweenOrders.length;
+        } else {
+          customer.avgDaysBetween = 0;
+        }
+        
+        // Categorize customer
+        if (customer.orderCount >= 10) {
+          customer.segment = 'VIP';
+        } else if (customer.orderCount >= 5) {
+          customer.segment = 'Loyal';
+        } else if (customer.orderCount >= 2) {
+          customer.segment = 'Repeat';
+        } else {
+          customer.segment = 'New';
+        }
+      });
+    }
+    
+    function changePeriod(period) {
+      currentPeriod = period;
+      document.querySelectorAll('.period-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`[data-period="${period}"]`).classList.add('active');
+      loadAnalytics();
+    }
+    
+    function filterOrdersByPeriod() {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      return allOrders.filter(order => {
+        const orderDate = parseOrderDate(order.time);
+        
+        switch(currentPeriod) {
+          case 'today':
+            return orderDate >= today;
+          case 'week':
+            const weekAgo = new Date(today);
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return orderDate >= weekAgo;
+          case 'month':
+            const monthAgo = new Date(today);
+            monthAgo.setMonth(monthAgo.getMonth() - 1);
+            return orderDate >= monthAgo;
+          case 'all':
+          default:
+            return true;
+        }
+      });
+    }
+    
+    function parseOrderDate(timeString) {
+      const parts = timeString.split(',')[0].trim();
+      const [day, month, year] = parts.split('/');
+      return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+    }
+    
+    function updateStats() {
+      const filteredOrders = filterOrdersByPeriod();
+      const completedOrders = filteredOrders.filter(o => o.status === 'completed' || o.status === 'ready');
+      
+      const totalRevenue = completedOrders.reduce((sum, o) => sum + o.total, 0);
+      const totalOrders = filteredOrders.length;
+      const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+      const uniqueCustomers = new Set(filteredOrders.map(o => o.phone)).size;
+      const acceptedOrders = filteredOrders.filter(o => o.status !== 'rejected').length;
+      const acceptanceRate = totalOrders > 0 ? (acceptedOrders / totalOrders * 100) : 0;
+      
+      // Customer behavior metrics
+      const customers = Object.values(customerData);
+      const repeatCustomers = customers.filter(c => c.orderCount > 1).length;
+      const repeatRate = customers.length > 0 ? (repeatCustomers / customers.length * 100) : 0;
+      
+      const avgFrequency = customers.length > 0 
+        ? customers.reduce((sum, c) => sum + c.orderCount, 0) / customers.length 
+        : 0;
+      
+      const avgDaysBetween = customers.length > 0
+        ? customers.filter(c => c.avgDaysBetween > 0)
+                   .reduce((sum, c) => sum + c.avgDaysBetween, 0) / customers.filter(c => c.avgDaysBetween > 0).length
+        : 0;
+      
+      const customerLifetimeValue = customers.length > 0
+        ? customers.reduce((sum, c) => sum + c.totalSpent, 0) / customers.length
+        : 0;
+      
+      document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+      document.getElementById('totalOrders').textContent = totalOrders;
+      document.getElementById('avgOrderValue').textContent = `₹${Math.round(avgOrderValue)}`;
+      document.getElementById('totalCustomers').textContent = uniqueCustomers;
+      document.getElementById('acceptanceRate').textContent = `${Math.round(acceptanceRate)}%`;
+      document.getElementById('avgPrepTime').textContent = '18m';
+      
+      // Customer behavior stats
+      document.getElementById('repeatCustomers').textContent = `${Math.round(repeatRate)}%`;
+      document.getElementById('avgFrequency').textContent = avgFrequency.toFixed(1);
+      document.getElementById('avgDaysBetween').textContent = `${Math.round(avgDaysBetween)}d`;
+      document.getElementById('customerLifetimeValue').textContent = `₹${Math.round(customerLifetimeValue)}`;
+    }
+    
+    function updateCharts() {
+      const filteredOrders = filterOrdersByPeriod();
+      
+      // Revenue Chart
+      createRevenueChart(filteredOrders);
+      
+      // Category Chart
+      createCategoryChart(filteredOrders);
+      
+      // Status Chart
+      createStatusChart(filteredOrders);
+      
+      // Customer Segment Chart
+      createSegmentChart();
+      
+      // Order Frequency Chart
+      createFrequencyChart();
+    }
+    
+    function createRevenueChart(orders) {
+      const ctx = document.getElementById('revenueChart');
+      
+      if (revenueChart) {
+        revenueChart.destroy();
+      }
+      
+      // Group orders by date
+      const revenueByDate = {};
+      orders.forEach(order => {
+        const date = parseOrderDate(order.time).toLocaleDateString();
+        revenueByDate[date] = (revenueByDate[date] || 0) + order.total;
+      });
+      
+      const labels = Object.keys(revenueByDate).sort((a, b) => new Date(a) - new Date(b));
+      const data = labels.map(date => revenueByDate[date]);
+      
+      revenueChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Revenue',
+            data: data,
+            borderColor: '#D4A373',
+            backgroundColor: 'rgba(212, 163, 115, 0.1)',
+            tension: 0.4,
+            fill: true,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1A1A1A',
+              padding: 12,
+              titleFont: { size: 14, weight: 'bold' },
+              bodyFont: { size: 13 },
+              callbacks: {
+                label: (context) => `Revenue: ₹${context.parsed.y.toLocaleString()}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: (value) => `₹${value}`
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createCategoryChart(orders) {
+      const ctx = document.getElementById('categoryChart');
+      
+      if (categoryChart) {
+        categoryChart.destroy();
+      }
+      
+      // Mock category data (in real implementation, parse from items)
+      const categories = {
+        'Main Course': Math.floor(orders.length * 0.45),
+        'Appetizers': Math.floor(orders.length * 0.20),
+        'Breads': Math.floor(orders.length * 0.15),
+        'Desserts': Math.floor(orders.length * 0.12),
+        'Beverages': Math.floor(orders.length * 0.08)
+      };
+      
+      categoryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categories),
+          datasets: [{
+            data: Object.values(categories),
+            backgroundColor: [
+              '#D4A373',
+              '#10B981',
+              '#3B82F6',
+              '#F59E0B',
+              '#8B5CF6'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: { size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1A1A1A',
+              padding: 12,
+              callbacks: {
+                label: (context) => `${context.label}: ${context.parsed} orders`
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createStatusChart(orders) {
+      const ctx = document.getElementById('statusChart');
+      
+      if (statusChart) {
+        statusChart.destroy();
+      }
+      
+      const statusCounts = {
+        pending: orders.filter(o => o.status === 'pending').length,
+        accepted: orders.filter(o => o.status === 'accepted' || o.status === 'preparing').length,
+        ready: orders.filter(o => o.status === 'ready').length,
+        completed: orders.filter(o => o.status === 'completed').length,
+        rejected: orders.filter(o => o.status === 'rejected').length
+      };
+      
+      statusChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Pending', 'Preparing', 'Ready', 'Completed', 'Rejected'],
+          datasets: [{
+            data: Object.values(statusCounts),
+            backgroundColor: [
+              '#F59E0B',
+              '#3B82F6',
+              '#10B981',
+              '#8B5CF6',
+              '#EF4444'
+            ],
+            borderWidth: 0,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1A1A1A',
+              padding: 12,
+              callbacks: {
+                label: (context) => `${context.parsed.y} orders`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createSegmentChart() {
+      const ctx = document.getElementById('segmentChart');
+      
+      if (segmentChart) {
+        segmentChart.destroy();
+      }
+      
+      const customers = Object.values(customerData);
+      const segments = {
+        'VIP (10+)': customers.filter(c => c.segment === 'VIP').length,
+        'Loyal (5-9)': customers.filter(c => c.segment === 'Loyal').length,
+        'Repeat (2-4)': customers.filter(c => c.segment === 'Repeat').length,
+        'New (1)': customers.filter(c => c.segment === 'New').length
+      };
+      
+      segmentChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(segments),
+          datasets: [{
+            data: Object.values(segments),
+            backgroundColor: [
+              '#D4A373',
+              '#8B5CF6',
+              '#3B82F6',
+              '#14B8A6'
+            ],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: { size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: '#1A1A1A',
+              padding: 12,
+              callbacks: {
+                label: (context) => `${context.label}: ${context.parsed} customers`
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function createFrequencyChart() {
+      const ctx = document.getElementById('frequencyChart');
+      
+      if (frequencyChart) {
+        frequencyChart.destroy();
+      }
+      
+      const customers = Object.values(customerData);
+      const frequencies = {
+        '1 order': customers.filter(c => c.orderCount === 1).length,
+        '2-4 orders': customers.filter(c => c.orderCount >= 2 && c.orderCount <= 4).length,
+        '5-9 orders': customers.filter(c => c.orderCount >= 5 && c.orderCount <= 9).length,
+        '10+ orders': customers.filter(c => c.orderCount >= 10).length
+      };
+      
+      frequencyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(frequencies),
+          datasets: [{
+            data: Object.values(frequencies),
+            backgroundColor: [
+              '#14B8A6',
+              '#3B82F6',
+              '#8B5CF6',
+              '#D4A373'
+            ],
+            borderWidth: 0,
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#1A1A1A',
+              padding: 12,
+              callbacks: {
+                label: (context) => `${context.parsed.y} customers`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    function renderCustomerInsights() {
+      // VIP Customers
+      const vipCustomers = Object.values(customerData)
+        .filter(c => c.segment === 'VIP')
+        .sort((a, b) => b.totalSpent - a.totalSpent)
+        .slice(0, 5);
+      
+      const vipContainer = document.getElementById('vipCustomers');
+      vipContainer.innerHTML = vipCustomers.map(customer => `
+        <div class="customer-card">
+          <div class="customer-header">
+            <div class="customer-info">
+              <h3>${customer.name}</h3>
+              <div class="customer-phone">${customer.phone}</div>
+            </div>
+            <div class="customer-badge badge-vip">VIP</div>
+          </div>
+          <div class="customer-stats">
+            <div class="customer-stat">
+              <div class="customer-stat-value">${customer.orderCount}</div>
+              <div class="customer-stat-label">Orders</div>
+            </div>
+            <div class="customer-stat">
+              <div class="customer-stat-value">₹${Math.round(customer.totalSpent)}</div>
+              <div class="customer-stat-label">Total Spent</div>
+            </div>
+            <div class="customer-stat">
+              <div class="customer-stat-value">Table ${customer.favoriteTable}</div>
+              <div class="customer-stat-label">Favorite</div>
+            </div>
+          </div>
+        </div>
+      `).join('') || '<p style="color: var(--text-light); text-align: center;">No VIP customers yet</p>';
+      
+      // Behavior Insights
+      const insights = generateBehaviorInsights();
+      const insightsContainer = document.getElementById('behaviorInsights');
+      insightsContainer.innerHTML = insights.map(insight => `
+        <div class="behavior-insight">
+          <div class="behavior-icon ${insight.type}">
+            ${insight.icon}
+          </div>
+          <div class="behavior-text">
+            <h4>${insight.title}</h4>
+            <p>${insight.description}</p>
+          </div>
+        </div>
+      `).join('');
+      
+      // Customer Preferences
+      renderCustomerPreferences();
+    }
+    
+    function generateBehaviorInsights() {
+      const customers = Object.values(customerData);
+      const insights = [];
+      
+      // Repeat customer rate
+      const repeatRate = customers.filter(c => c.orderCount > 1).length / customers.length * 100;
+      if (repeatRate > 40) {
+        insights.push({
+          icon: '🎉',
+          type: 'success',
+          title: 'Strong Customer Loyalty',
+          description: `${Math.round(repeatRate)}% of customers have ordered more than once. Your food quality is driving repeat business!`
+        });
+      }
+      
+      // Average order frequency
+      const avgOrders = customers.reduce((sum, c) => sum + c.orderCount, 0) / customers.length;
+      if (avgOrders > 3) {
+        insights.push({
+          icon: '📈',
+          type: 'info',
+          title: 'High Order Frequency',
+          description: `Customers order ${avgOrders.toFixed(1)} times on average. Consider launching a loyalty program to reward frequent diners.`
+        });
+      }
+      
+      // Quick return customers
+      const quickReturns = customers.filter(c => c.avgDaysBetween > 0 && c.avgDaysBetween < 7).length;
+      if (quickReturns > customers.length * 0.2) {
+        insights.push({
+          icon: '⚡',
+          type: 'warning',
+          title: 'Fast Return Customers',
+          description: `${quickReturns} customers return within a week. They love your food - make sure to maintain consistency!`
+        });
+      }
+      
+      // High value customers
+      const highValueCustomers = customers.filter(c => c.totalSpent > 2000).length;
+      if (highValueCustomers > 0) {
+        insights.push({
+          icon: '💎',
+          type: 'purple',
+          title: 'High-Value Customers',
+          description: `You have ${highValueCustomers} customers who've spent over ₹2,000. Consider VIP perks or exclusive menu items.`
+        });
+      }
+      
+      return insights;
+    }
+    
+    function renderCustomerPreferences() {
+      const container = document.getElementById('customerPreferences');
+      
+      // Mock preferences (in real implementation, analyze actual order items)
+      const preferences = [
+        { preference: 'Main Course Lovers', percent: 65, description: 'Most customers order main courses' },
+        { preference: 'Dessert Enthusiasts', percent: 42, description: 'Almost half order desserts' },
+        { preference: 'Evening Diners', percent: 58, description: 'Peak orders between 7-9 PM' },
+        { preference: 'Window Seat Preference', percent: 38, description: 'Tables 3, 5, 7 most popular' }
+      ];
+      
+      container.innerHTML = preferences.map(pref => `
+        <li class="item-row">
+          <div class="item-info">
+            <div class="item-name">${pref.preference}</div>
+            <div class="item-meta">${pref.description}</div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: ${pref.percent}%;"></div>
+            </div>
+          </div>
+          <div class="item-stat">
+            <div class="item-value">${pref.percent}%</div>
+          </div>
+        </li>
+      `).join('');
+    }
+    
+    function renderPeakHours() {
+      const container = document.getElementById('peakHours');
+      const hours = [];
+      
+      // Generate mock peak hours data
+      for (let i = 11; i <= 22; i++) {
+        const isPeak = i >= 12 && i <= 14 || i >= 19 && i <= 21;
+        const orders = isPeak ? Math.floor(Math.random() * 15) + 10 : Math.floor(Math.random() * 5) + 1;
+        
+        hours.push(`
+          <div class="hour-box ${isPeak ? 'peak' : ''}">
+            <div class="hour-time">${i > 12 ? i - 12 : i} ${i >= 12 ? 'PM' : 'AM'}</div>
+            <div class="hour-orders">${orders}</div>
+          </div>
+        `);
+      }
+      
+      container.innerHTML = hours.join('');
+    }
+    
+    function exportReport() {
+      const filteredOrders = filterOrdersByPeriod();
+      
+      // Create CSV content
+      let csv = 'Order ID,Customer Name,Phone,Table,Items,Total,Time,Status,Payment,Customer Segment,Total Orders,Total Spent\n';
+      
+      filteredOrders.forEach(order => {
+        const customer = customerData[order.phone];
+        csv += `"${order.orderId}","${order.name}","${order.phone}","${order.table}","${order.items}","${order.total}","${order.time}","${order.status}","${order.payment}","${customer?.segment || 'N/A'}","${customer?.orderCount || 1}","${customer?.totalSpent || order.total}"\n`;
+      });
+      
+      // Download CSV
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `myhotel-analytics-${currentPeriod}-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      alert('✅ Report exported successfully with customer behavior data!');
+    }
+    
+    function exportCustomerSegment(segment) {
+      const customers = Object.values(customerData).filter(c => c.segment === segment);
+      
+      if (customers.length === 0) {
+        alert(`No ${segment} customers found in the selected period.`);
+        return;
+      }
+      
+      // Create CSV content
+      let csv = 'Customer Name,Phone Number,Total Orders,Total Spent,Avg Order Value,First Order,Last Order,Avg Days Between Orders,Favorite Table,Segment\n';
+      
+      customers.forEach(customer => {
+        const firstOrder = customer.firstOrder ? customer.firstOrder.toLocaleDateString() : 'N/A';
+        const lastOrder = customer.lastOrder ? customer.lastOrder.toLocaleDateString() : 'N/A';
+        const avgDays = customer.avgDaysBetween > 0 ? Math.round(customer.avgDaysBetween) : 'N/A';
+        
+        csv += `"${customer.name}","${customer.phone}","${customer.orderCount}","${customer.totalSpent}","${Math.round(customer.avgOrderValue)}","${firstOrder}","${lastOrder}","${avgDays}","${customer.favoriteTable}","${customer.segment}"\n`;
+      });
+      
+      // Download CSV
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `myhotel-${segment.toLowerCase()}-customers-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      alert(`✅ Exported ${customers.length} ${segment} customers!\n\nFile: myhotel-${segment.toLowerCase()}-customers-${new Date().toISOString().split('T')[0]}.csv`);
+    }
+    
+    function exportAllCustomers() {
+      const customers = Object.values(customerData);
+      
+      if (customers.length === 0) {
+        alert('No customer data available.');
+        return;
+      }
+      
+      // Create detailed CSV with all customer insights
+      let csv = 'Customer Name,Phone Number,Segment,Total Orders,Total Spent,Avg Order Value,First Order Date,Last Order Date,Days Since Last Order,Avg Days Between Orders,Favorite Table,Customer Since (Days)\n';
+      
+      customers.forEach(customer => {
+        const firstOrder = customer.firstOrder ? customer.firstOrder.toLocaleDateString() : 'N/A';
+        const lastOrder = customer.lastOrder ? customer.lastOrder.toLocaleDateString() : 'N/A';
+        const avgDays = customer.avgDaysBetween > 0 ? Math.round(customer.avgDaysBetween) : 'N/A';
+        
+        // Calculate days since last order
+        const daysSinceLastOrder = customer.lastOrder 
+          ? Math.floor((new Date() - customer.lastOrder) / (1000 * 60 * 60 * 24))
+          : 'N/A';
+        
+        // Calculate customer lifetime (days since first order)
+        const customerLifetime = customer.firstOrder
+          ? Math.floor((new Date() - customer.firstOrder) / (1000 * 60 * 60 * 24))
+          : 'N/A';
+        
+        csv += `"${customer.name}","${customer.phone}","${customer.segment}","${customer.orderCount}","${customer.totalSpent}","${Math.round(customer.avgOrderValue)}","${firstOrder}","${lastOrder}","${daysSinceLastOrder}","${avgDays}","${customer.favoriteTable}","${customerLifetime}"\n`;
+      });
+      
+      // Download CSV
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `myhotel-all-customer-profiles-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      
+      const segmentBreakdown = {
+        VIP: customers.filter(c => c.segment === 'VIP').length,
+        Loyal: customers.filter(c => c.segment === 'Loyal').length,
+        Repeat: customers.filter(c => c.segment === 'Repeat').length,
+        New: customers.filter(c => c.segment === 'New').length
+      };
+      
+      alert(`✅ Exported ${customers.length} customer profiles!\n\nBreakdown:\n👑 VIP: ${segmentBreakdown.VIP}\n⭐ Loyal: ${segmentBreakdown.Loyal}\n🔄 Repeat: ${segmentBreakdown.Repeat}\n🆕 New: ${segmentBreakdown.New}\n\nFile: myhotel-all-customer-profiles-${new Date().toISOString().split('T')[0]}.csv`);
+    }
+    
+    // Initialize with mock data if needed
+    if (typeof Chart === 'undefined') {
+      console.error('Chart.js not loaded');
+    }
+  </script>
+  
+</body>
+</html>
