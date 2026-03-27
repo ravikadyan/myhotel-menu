@@ -1083,10 +1083,9 @@
       
       try {
         const response = await fetch(SHEET_URL, {
-  method: 'POST',
-  body: JSON.stringify(orderData)
-  // NO headers line
-});
+          method: 'POST',
+          body: JSON.stringify(orderData)
+        });
         
         const result = await response.json();
         
@@ -1255,16 +1254,34 @@
     function startStatusPolling(orderId) {
       pollingInterval = setInterval(async () => {
         try {
-          const response = await fetch(SHEET_URL + '?action=getStatus&orderId=' + orderId);
+          const response = await fetch(SHEET_URL);
           const data = await response.json();
-          
-          if (data.result === 'success') {
-            if (data.status === 'accepted' || data.status === 'preparing') {
-              clearInterval(pollingInterval);
-              showConfirmedScreen(data.eta);
-            } else if (data.status === 'ready') {
-              clearInterval(pollingInterval);
-              showReadyScreen();
+
+          if (data.result === 'success' && data.data) {
+            const orders = data.data.slice(1);
+            const order = orders.find(o => o[0] === orderId);
+
+            if (order) {
+              const status = order[7];
+              const eta = order[8] || '';
+
+              if (status === 'accepted' || status === 'preparing') {
+                clearInterval(pollingInterval);
+                showConfirmedScreen(eta);
+              } else if (status === 'ready') {
+                clearInterval(pollingInterval);
+                showReadyScreen();
+              } else if (status === 'rejected') {
+                clearInterval(pollingInterval);
+                document.getElementById('modal').innerHTML = `
+                  <div class="status-screen">
+                    <div class="status-icon">❌</div>
+                    <div class="status-title">Order Rejected</div>
+                    <div class="status-subtitle">Sorry, the restaurant could not accept your order. Please contact staff.</div>
+                    <button class="btn-secondary" onclick="closeModalAfterOrder()">Close</button>
+                  </div>
+                `;
+              }
             }
           }
         } catch (error) {
