@@ -26,738 +26,140 @@
       --info-light: #DBEAFE;
     }
     
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
     
-    .header {
-      background: var(--primary);
-      color: white;
-      padding: 24px 20px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    
-    .header-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .header-left h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    
-    .header-left .subtitle {
-      font-size: 13px;
-      opacity: 0.8;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    
-    .header-stats {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-    }
-    
-    .stat-item {
-      text-align: center;
-    }
-    
-    .stat-number {
-      font-size: 24px;
-      font-weight: 700;
-      font-family: 'Inter', sans-serif;
-      color: var(--accent);
-    }
-    
-    .stat-label {
-      font-size: 11px;
-      opacity: 0.7;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 2px;
-    }
-    
-    .refresh-btn {
-      background: var(--accent);
-      border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: var(--primary);
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.2s;
-    }
-    
-    .refresh-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(212, 163, 115, 0.3);
-    }
-    
-    /* Date Picker Controls */
-    .date-controls {
-      max-width: 1200px;
-      margin: 24px auto;
-      padding: 0 20px;
-    }
-    
-    .date-picker-bar {
-      background: white;
-      padding: 20px;
-      border-radius: 16px;
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      border: 2px solid var(--border);
-    }
-    
-    .date-quick-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    
-    .date-btn {
-      padding: 10px 18px;
-      border-radius: 100px;
-      border: 2px solid var(--border);
-      background: white;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    
-    .date-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    
-    .date-btn:hover:not(.active) {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    
-    .date-picker-input {
-      padding: 10px 16px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-      cursor: pointer;
-      background: white;
-      min-width: 180px;
-    }
-    
-    .date-picker-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .search-box {
-      display: flex;
-      gap: 10px;
-      flex: 1;
-      max-width: 400px;
-    }
-    
-    .search-input {
-      flex: 1;
-      padding: 10px 16px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 14px;
-    }
-    
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .search-btn {
-      padding: 10px 20px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    
-    .archive-btn {
-      padding: 10px 20px;
-      background: var(--info);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    
-    /* Date Info Bar */
-    .date-info-bar {
-      background: white;
-      padding: 16px 20px;
-      border-radius: 12px;
-      margin-top: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 2px solid var(--border);
-    }
-    
-    .date-info-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .date-label {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--primary);
-      font-family: 'Playfair Display', serif;
-    }
-    
-    .date-badge {
-      padding: 6px 14px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-    
-    .date-badge.today {
-      background: var(--success-light);
-      color: var(--success);
-    }
-    
-    .date-badge.yesterday {
-      background: var(--info-light);
-      color: var(--info);
-    }
-    
-    .date-badge.archive {
-      background: var(--warning-light);
-      color: var(--warning);
-    }
-    
-    .date-stats-bar {
-      display: flex;
-      gap: 24px;
-    }
-    
-    .date-stat-item {
-      text-align: center;
-    }
-    
-    .date-stat-number {
-      font-size: 20px;
-      font-weight: 700;
-      color: var(--primary);
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .date-stat-label {
-      font-size: 11px;
-      color: var(--text-light);
-      text-transform: uppercase;
-    }
-    
-    /* Filters */
-    .filters {
-      max-width: 1200px;
-      margin: 20px auto 0;
-      padding: 0 20px;
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      scrollbar-width: thin;
-    }
-    
-    .filter-chip {
-      flex-shrink: 0;
-      padding: 10px 20px;
-      border-radius: 100px;
-      border: 2px solid var(--border);
-      background: white;
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-    
-    .filter-chip.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-    
-    .filter-chip .badge {
-      display: inline-block;
-      background: var(--accent);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 12px;
-      font-size: 11px;
-      margin-left: 8px;
-      font-weight: 700;
-    }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px 40px;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      color: var(--text-light);
-    }
-    
-    .empty-state-icon {
-      font-size: 64px;
-      margin-bottom: 16px;
-      opacity: 0.5;
-    }
-    
-    .empty-state h3 {
-      font-size: 20px;
-      margin-bottom: 8px;
-      color: var(--text);
-    }
-    
-    .empty-state p {
-      font-size: 14px;
-    }
-    
-    .orders-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-    
-    .order-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 20px;
-      border: 2px solid var(--border);
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .order-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--accent);
-    }
-    
+    .header { background: var(--primary); color: white; padding: 24px 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+    .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
+    .header-left h1 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+    .header-left .subtitle { font-size: 13px; opacity: 0.8; letter-spacing: 1px; text-transform: uppercase; }
+    .header-stats { display: flex; gap: 24px; align-items: center; }
+    .stat-item { text-align: center; }
+    .stat-number { font-size: 24px; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 11px; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .refresh-btn { background: var(--accent); border: none; padding: 10px 20px; border-radius: 8px; color: var(--primary); font-weight: 600; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .refresh-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(212,163,115,0.3); }
+
+    .date-controls { max-width: 1200px; margin: 24px auto; padding: 0 20px; }
+    .date-picker-bar { background: white; padding: 20px; border-radius: 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 2px solid var(--border); }
+    .date-quick-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+    .date-btn { padding: 10px 18px; border-radius: 100px; border: 2px solid var(--border); background: white; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .date-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .date-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+    .date-picker-input { padding: 10px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--text); cursor: pointer; background: white; min-width: 180px; }
+    .date-picker-input:focus { outline: none; border-color: var(--accent); }
+    .search-box { display: flex; gap: 10px; flex: 1; max-width: 400px; }
+    .search-input { flex: 1; padding: 10px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 14px; }
+    .search-input:focus { outline: none; border-color: var(--accent); }
+    .search-btn { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .archive-btn { padding: 10px 20px; background: var(--info); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+    .date-info-bar { background: white; padding: 16px 20px; border-radius: 12px; margin-top: 16px; display: flex; justify-content: space-between; align-items: center; border: 2px solid var(--border); }
+    .date-info-left { display: flex; align-items: center; gap: 12px; }
+    .date-label { font-size: 18px; font-weight: 700; color: var(--primary); font-family: 'Playfair Display', serif; }
+    .date-badge { padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .date-badge.today { background: var(--success-light); color: var(--success); }
+    .date-badge.yesterday { background: var(--info-light); color: var(--info); }
+    .date-badge.archive { background: var(--warning-light); color: var(--warning); }
+    .date-stats-bar { display: flex; gap: 24px; }
+    .date-stat-item { text-align: center; }
+    .date-stat-number { font-size: 20px; font-weight: 700; color: var(--primary); }
+    .date-stat-label { font-size: 11px; color: var(--text-light); text-transform: uppercase; }
+
+    .filters { max-width: 1200px; margin: 20px auto 0; padding: 0 20px; display: flex; gap: 12px; overflow-x: auto; scrollbar-width: thin; }
+    .filter-chip { flex-shrink: 0; padding: 10px 20px; border-radius: 100px; border: 2px solid var(--border); background: white; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .filter-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .filter-chip .badge { display: inline-block; background: var(--accent); color: white; padding: 2px 8px; border-radius: 12px; font-size: 11px; margin-left: 8px; font-weight: 700; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 40px; }
+    .empty-state { text-align: center; padding: 80px 20px; color: var(--text-light); }
+    .empty-state-icon { font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+    .empty-state h3 { font-size: 20px; margin-bottom: 8px; color: var(--text); }
+    .empty-state p { font-size: 14px; }
+
+    .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; margin-top: 20px; }
+
+    .order-card { background: var(--card); border-radius: 16px; padding: 20px; border: 2px solid var(--border); transition: all 0.3s; position: relative; overflow: hidden; animation: slideIn 0.3s ease-out; }
+    .order-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent); }
     .order-card.pending::before { background: var(--warning); }
-    .order-card.preparing::before { background: var(--info); }
+    .order-card.accepted::before { background: var(--info); }
     .order-card.ready::before { background: var(--success); }
-    
-    .order-card:hover {
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      transform: translateY(-4px);
-      border-color: var(--accent);
-    }
-    
-    .order-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 16px;
-      padding-bottom: 16px;
-      border-bottom: 2px solid var(--accent);
-    }
-    
-    .order-id {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--primary);
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .order-time {
-      font-size: 12px;
-      color: var(--text-light);
-      margin-top: 4px;
-    }
-    
-    .table-badge {
-      background: var(--accent);
-      color: white;
-      padding: 8px 16px;
-      border-radius: 100px;
-      font-size: 14px;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgba(212, 163, 115, 0.3);
-    }
-    
-    .order-customer {
-      background: var(--bg);
-      padding: 12px 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-    }
-    
-    .customer-name {
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .customer-phone {
-      font-size: 13px;
-      color: var(--text-light);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .order-items {
-      margin-bottom: 16px;
-    }
-    
-    .order-items-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 8px;
-    }
-    
-    .items-list {
-      background: var(--bg);
-      padding: 12px;
-      border-radius: 12px;
-      font-size: 14px;
-      color: var(--text);
-      line-height: 1.6;
-    }
-    
-    .order-total {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      background: var(--bg);
-      border-radius: 12px;
-      margin-bottom: 16px;
-    }
-    
-    .total-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    
-    .total-amount {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--primary);
-      font-family: 'Inter', sans-serif;
-    }
-    
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 100px;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 16px;
-    }
-    
-    .status-badge.pending {
-      background: var(--warning-light);
-      color: var(--warning);
-    }
-    
-    .status-badge.preparing {
-      background: var(--info-light);
-      color: var(--info);
-    }
-    
-    .status-badge.ready {
-      background: var(--success-light);
-      color: var(--success);
-    }
-    
-    .action-buttons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-    
-    .action-buttons.single {
-      grid-template-columns: 1fr;
-    }
-    
-    .btn {
-      padding: 14px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-family: 'Inter', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .btn:hover {
-      transform: translateY(-2px);
-    }
-    
-    .btn:active {
-      transform: scale(0.98);
-    }
-    
-    .btn-accept {
-      background: var(--success);
-      color: white;
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-    }
-    
-    .btn-accept:hover {
-      background: #059669;
-      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
-    }
-    
-    .btn-reject {
-      background: white;
-      color: var(--danger);
-      border: 2px solid var(--danger);
-    }
-    
-    .btn-reject:hover {
-      background: var(--danger);
-      color: white;
-    }
-    
-    .btn-ready {
-      background: var(--accent);
-      color: white;
-      box-shadow: 0 4px 12px rgba(212, 163, 115, 0.2);
-    }
-    
-    .btn-ready:hover {
-      background: #C4936B;
-      box-shadow: 0 6px 16px rgba(212, 163, 115, 0.3);
-    }
-    
-    .btn-complete {
-      background: white;
-      color: var(--success);
-      border: 2px solid var(--success);
-    }
-    
-    .btn-complete:hover {
-      background: var(--success);
-      color: white;
-    }
-    
-    .login-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: var(--primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-    
-    .login-box {
-      background: white;
-      padding: 48px 40px;
-      border-radius: 24px;
-      text-align: center;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    
-    .login-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-    
-    .login-subtitle {
-      color: var(--text-light);
-      font-size: 14px;
-      margin-bottom: 32px;
-    }
-    
-    .pin-input {
-      width: 100%;
-      padding: 16px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      font-size: 24px;
-      text-align: center;
-      font-weight: 700;
-      letter-spacing: 8px;
-      margin-bottom: 20px;
-      font-family: 'Courier New', monospace;
-    }
-    
-    .pin-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-    
-    .login-btn {
-      width: 100%;
-      padding: 16px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .login-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-    
-    .error-message {
-      color: var(--danger);
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-    
-    .error-message.show {
-      display: block;
-    }
-    
+    .order-card.rejected::before { background: var(--danger); }
+    .order-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.08); transform: translateY(-4px); border-color: var(--accent); }
+
+    .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 2px solid var(--accent); }
+    .order-id { font-size: 16px; font-weight: 700; color: var(--primary); }
+    .order-time { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+    .table-badge { background: var(--accent); color: white; padding: 8px 16px; border-radius: 100px; font-size: 14px; font-weight: 700; box-shadow: 0 2px 8px rgba(212,163,115,0.3); }
+
+    .order-customer { background: var(--bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; }
+    .customer-name { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .customer-phone { font-size: 13px; color: var(--text-light); display: flex; align-items: center; gap: 8px; }
+
+    .order-items { margin-bottom: 16px; }
+    .order-items-title { font-size: 12px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .items-list { background: var(--bg); padding: 12px; border-radius: 12px; font-size: 14px; color: var(--text); line-height: 1.6; }
+
+    .order-total { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--bg); border-radius: 12px; margin-bottom: 16px; }
+    .total-label { font-size: 14px; font-weight: 600; color: var(--text); }
+    .total-amount { font-size: 24px; font-weight: 700; color: var(--primary); }
+
+    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+    .status-badge.pending { background: var(--warning-light); color: var(--warning); }
+    .status-badge.accepted { background: var(--info-light); color: var(--info); }
+    .status-badge.ready { background: var(--success-light); color: var(--success); }
+    .status-badge.rejected { background: var(--danger-light); color: var(--danger); }
+
+    .action-buttons { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    .btn { padding: 14px 20px; border: none; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: scale(0.98); }
+    .btn-accept { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(16,185,129,0.2); }
+    .btn-accept:hover { background: #059669; box-shadow: 0 6px 16px rgba(16,185,129,0.3); }
+    .btn-reject { background: white; color: var(--danger); border: 2px solid var(--danger); }
+    .btn-reject:hover { background: var(--danger); color: white; }
+
+    .login-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: var(--primary); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+    .login-box { background: white; padding: 48px 40px; border-radius: 24px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .login-title { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--primary); margin-bottom: 8px; }
+    .login-subtitle { color: var(--text-light); font-size: 14px; margin-bottom: 32px; }
+    .pin-input { width: 100%; padding: 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 24px; text-align: center; font-weight: 700; letter-spacing: 8px; margin-bottom: 20px; font-family: 'Courier New', monospace; }
+    .pin-input:focus { outline: none; border-color: var(--accent); }
+    .login-btn { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+    .login-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+    .error-message { color: var(--danger); font-size: 13px; margin-top: 12px; display: none; }
+    .error-message.show { display: block; }
+
     @media (max-width: 768px) {
-      .orders-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      .header-stats {
-        display: none;
-      }
-      
-      .date-picker-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      
-      .search-box {
-        max-width: 100%;
-      }
+      .orders-grid { grid-template-columns: 1fr; }
+      .header-stats { display: none; }
+      .date-picker-bar { flex-direction: column; align-items: stretch; }
+      .search-box { max-width: 100%; }
     }
-    
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
-    .order-card {
-      animation: slideIn 0.3s ease-out;
-    }
-    
-    .loading {
-      text-align: center;
-      padding: 40px;
-      color: var(--text-light);
-    }
-    
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading { text-align: center; padding: 40px; color: var(--text-light); }
+    .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
   </style>
 </head>
 <body>
-  
+
+  <!-- LOGIN SCREEN -->
   <div class="login-screen" id="loginScreen">
     <div class="login-box">
       <div class="login-title">MyHotel</div>
       <div class="login-subtitle">Owner Dashboard</div>
-      <input 
-        type="password" 
-        class="pin-input" 
-        id="pinInput" 
-        placeholder="••••" 
-        maxlength="4"
-        inputmode="numeric"
-      >
+      <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="4" inputmode="numeric" onkeydown="if(event.key==='Enter') checkPIN()">
       <button class="login-btn" onclick="checkPIN()">Access Dashboard</button>
       <div class="error-message" id="errorMessage">Incorrect PIN. Please try again.</div>
     </div>
   </div>
-  
+
+  <!-- DASHBOARD -->
   <div id="dashboard" style="display: none;">
-    
+
     <div class="header">
       <div class="header-content">
         <div class="header-left">
@@ -777,7 +179,7 @@
         </div>
       </div>
     </div>
-    
+
     <div class="date-controls">
       <div class="date-picker-bar">
         <div class="date-quick-buttons">
@@ -786,17 +188,14 @@
           <button class="date-btn" onclick="selectDateRange('last7')" data-range="last7">📊 Last 7 Days</button>
           <button class="date-btn" onclick="selectDateRange('last30')" data-range="last30">📈 Last 30 Days</button>
         </div>
-        
         <input type="date" class="date-picker-input" id="datePicker" onchange="selectCustomDate()">
-        
         <div class="search-box">
           <input type="text" class="search-input" id="searchInput" placeholder="Order ID or Phone">
           <button class="search-btn" onclick="searchOrders()">🔍 Search</button>
         </div>
-        
         <button class="archive-btn" onclick="viewArchives()">🗄️ Archives</button>
       </div>
-      
+
       <div class="date-info-bar">
         <div class="date-info-left">
           <div class="date-label" id="dateLabel">Today</div>
@@ -814,658 +213,457 @@
         </div>
       </div>
     </div>
-    
+
     <div class="filters">
-      <button class="filter-chip active" onclick="filterOrders('all')" data-filter="all">
-        All Orders <span class="badge" id="badge-all">0</span>
-      </button>
-      <button class="filter-chip" onclick="filterOrders('pending')" data-filter="pending">
-        🟡 Pending <span class="badge" id="badge-pending">0</span>
-      </button>
-      <button class="filter-chip" onclick="filterOrders('preparing')" data-filter="preparing">
-        🔵 Preparing <span class="badge" id="badge-preparing">0</span>
-      </button>
-      <button class="filter-chip" onclick="filterOrders('ready')" data-filter="ready">
-        🟢 Ready <span class="badge" id="badge-ready">0</span>
-      </button>
+      <button class="filter-chip active" onclick="filterOrders('all')" data-filter="all">All Orders <span class="badge" id="badge-all">0</span></button>
+      <button class="filter-chip" onclick="filterOrders('pending')" data-filter="pending">🟡 Pending <span class="badge" id="badge-pending">0</span></button>
+      <button class="filter-chip" onclick="filterOrders('preparing')" data-filter="preparing">🔵 Preparing <span class="badge" id="badge-preparing">0</span></button>
+      <button class="filter-chip" onclick="filterOrders('ready')" data-filter="ready">🟢 Ready <span class="badge" id="badge-ready">0</span></button>
     </div>
-    
+
     <div class="container">
       <div class="loading" id="loading">
         <div class="spinner"></div>
         <div>Loading orders...</div>
       </div>
-      
+
       <div class="empty-state" id="emptyState" style="display: none;">
         <div class="empty-state-icon">📋</div>
         <h3>No Orders Found</h3>
         <p>No orders for the selected date range</p>
       </div>
-      
-      <!-- Approval Queue Section -->
-<div id="approvalSection" style="display: none; margin-bottom: 32px;">
-  <h2 style="font-size: 24px; margin-bottom: 16px; color: #F59E0B; display: flex; align-items: center; gap: 8px;">
-    <span>⚠️</span> Orders Needing Approval
-  </h2>
-  <div id="approvalGrid" class="orders-grid"></div>
-</div>
 
+      <!-- APPROVAL QUEUE -->
+      <div id="approvalSection" style="display: none; margin-bottom: 32px;">
+        <h2 style="font-size: 24px; margin-bottom: 16px; color: #F59E0B; display: flex; align-items: center; gap: 8px;">
+          <span>⚠️</span> Orders Needing Approval
+        </h2>
+        <div id="approvalGrid" class="orders-grid"></div>
+      </div>
+
+      <!-- NORMAL ORDERS -->
       <div class="orders-grid" id="ordersGrid"></div>
     </div>
-    
+
   </div>
-  
+
   <script>
     const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw6iSf6C5XBQS_qdD6OZc6iyip5p7TAqERjhmaGqyk39Htg7dkK8IZfx58co3D53Qfb/exec';
     const OWNER_WHATSAPP = '917404787308';
     const RESTAURANT_NAME = 'MyHotel';
     const PIN_CODE = '1234';
-    
-    let allOrders = [];
+
+    let allOrders = [];      // Full list — NEVER overwrite this after load
+    let displayOrders = [];  // Date/search filtered view
     let currentFilter = 'all';
     let currentDateRange = 'today';
     let selectedDate = null;
     let autoRefreshInterval;
-    
-    // PIN Authentication
+
+    // ── PIN AUTH ──────────────────────────────────────────────────
     function checkPIN() {
-      const input = document.getElementById('pinInput').value;
-      const error = document.getElementById('errorMessage');
-      
-      if (input === PIN_CODE) {
+      const pin = document.getElementById('pinInput').value;
+      if (pin === PIN_CODE) {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
-        initializeDashboard();
+        initDashboard();
       } else {
-        error.classList.add('show');
+        document.getElementById('errorMessage').classList.add('show');
         document.getElementById('pinInput').value = '';
-        document.getElementById('pinInput').focus();
       }
     }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-      const pinInput = document.getElementById('pinInput');
-      if (pinInput) {
-        pinInput.focus();
-        pinInput.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter') checkPIN();
-        });
-      }
-      
-      // Set today's date in date picker
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('datePicker').value = today;
-      document.getElementById('datePicker').max = today;
-    });
-    
-    function initializeDashboard() {
+
+    function initDashboard() {
+      const today = new Date();
+      document.getElementById('datePicker').value = today.toISOString().split('T')[0];
       loadOrders();
       startAutoRefresh();
     }
-    
-    // Date Range Selection
-    function selectDateRange(range) {
-      currentDateRange = range;
-      selectedDate = null;
-      
-      // Update active button
-      document.querySelectorAll('.date-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`[data-range="${range}"]`).classList.add('active');
-      
-      loadOrders();
-    }
-    
-    function selectCustomDate() {
-      const dateInput = document.getElementById('datePicker');
-      selectedDate = dateInput.value;
-      currentDateRange = 'custom';
-      
-      // Deactivate all quick buttons
-      document.querySelectorAll('.date-btn').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      loadOrders();
-    }
-    
-    // Load Orders with Date Filtering
+
+    // ── LOAD ORDERS ───────────────────────────────────────────────
     async function loadOrders(silent = false) {
       try {
         if (!silent) {
           document.getElementById('loading').style.display = 'block';
+          document.getElementById('emptyState').style.display = 'none';
+          document.getElementById('ordersGrid').innerHTML = '';
         }
-        
+
         const response = await fetch(SHEET_URL);
         const data = await response.json();
-        
+
         if (data.result === 'success' && data.data) {
-        allOrders = data.data.slice(1).map(row => ({
-          orderId: row[0],
-          name: row[1],
-          phone: row[2],
-          table: row[3],
-          items: row[4],
-          total: row[5],
-          time: row[6],
-          status: row[7] || 'pending',
-          eta: row[8] || '',
-          payment: row[9] || 'cash',
-          approvalStatus: row[10] || 'auto',
-          orderCount: row[11] || 1
-          })).filter(order => order.orderId).reverse();
-          
-          filterByDateRange();
+          allOrders = data.data.slice(1)
+            .map(row => ({
+              orderId:        row[0] || '',
+              name:           row[1] || '',
+              phone:          row[2] || '',
+              table:          row[3] || '',
+              items:          row[4] || '',
+              total:          row[5] || 0,
+              time:           row[6] || '',
+              status:         row[7] || 'pending',
+              eta:            row[8] || '',
+              payment:        row[9] || 'cash',
+              approvalStatus: row[10] || 'auto',
+              orderCount:     row[11] || 1
+            }))
+            .filter(order => order.orderId)
+            .reverse();
+
+          applyDateFilter();
           updateStats();
           renderOrders();
         }
-        
+
         if (!silent) {
           document.getElementById('loading').style.display = 'none';
         }
-        
+
       } catch (error) {
         console.error('Error loading orders:', error);
-        if (!silent) {
-          document.getElementById('loading').style.display = 'none';
-        }
+        if (!silent) document.getElementById('loading').style.display = 'none';
       }
     }
-    
-    // Filter orders by selected date range
-    function filterByDateRange() {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      const last7Start = new Date(today);
-      last7Start.setDate(last7Start.getDate() - 6);
-      
-      const last30Start = new Date(today);
-      last30Start.setDate(last30Start.getDate() - 29);
-      
-      allOrders = allOrders.filter(order => {
+
+    // ── DATE FILTER (uses displayOrders, never touches allOrders) ─
+    function applyDateFilter() {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+      const last7Start = new Date(today); last7Start.setDate(last7Start.getDate()-6);
+      const last30Start = new Date(today); last30Start.setDate(last30Start.getDate()-29);
+
+      displayOrders = allOrders.filter(order => {
         const orderDate = parseOrderDate(order.time);
-        
-        switch(currentDateRange) {
-          case 'today':
-            updateDateLabel('Today', 'today', 'Today');
-            return isSameDay(orderDate, today);
-            
-          case 'yesterday':
-            updateDateLabel('Yesterday', 'yesterday', 'Yesterday');
-            return isSameDay(orderDate, yesterday);
-            
-          case 'last7':
-            updateDateLabel('Last 7 Days', 'archive', 'Last 7 Days');
-            return orderDate >= last7Start && orderDate <= today;
-            
-          case 'last30':
-            updateDateLabel('Last 30 Days', 'archive', 'Last 30 Days');
-            return orderDate >= last30Start && orderDate <= today;
-            
+        switch (currentDateRange) {
+          case 'today':     return isSameDay(orderDate, today);
+          case 'yesterday': return isSameDay(orderDate, yesterday);
+          case 'last7':     return orderDate >= last7Start;
+          case 'last30':    return orderDate >= last30Start;
           case 'custom':
             if (selectedDate) {
-              const selected = new Date(selectedDate);
-              selected.setHours(0, 0, 0, 0);
-              const dateLabel = formatDateLabel(selected);
-              const badge = getDateBadgeType(selected);
-              updateDateLabel(dateLabel, badge, formatShortDate(selected));
-              return isSameDay(orderDate, selected);
+              const sel = new Date(selectedDate); sel.setHours(0,0,0,0);
+              return isSameDay(orderDate, sel);
             }
             return true;
-            
-          default:
-            return true;
+          default: return true;
         }
       });
-    }
-    
-    // Parse order date from timestamp
-    function parseOrderDate(timeString) {
-      const parts = timeString.split(',')[0].trim();
-      const [day, month, year] = parts.split('/');
-      const date = new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
-      date.setHours(0, 0, 0, 0);
-      return date;
-    }
-    
-    function isSameDay(date1, date2) {
-      return date1.getFullYear() === date2.getFullYear() &&
-             date1.getMonth() === date2.getMonth() &&
-             date1.getDate() === date2.getDate();
-    }
-    
-    function formatDateLabel(date) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      if (isSameDay(date, today)) {
-        return 'Today';
-      } else if (isSameDay(date, yesterday)) {
-        return 'Yesterday';
-      } else {
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        return date.toLocaleDateString('en-IN', options);
+
+      // Update label
+      switch (currentDateRange) {
+        case 'today':     updateDateLabel('Today', 'today', 'Today'); break;
+        case 'yesterday': updateDateLabel('Yesterday', 'yesterday', 'Yesterday'); break;
+        case 'last7':     updateDateLabel('Last 7 Days', 'archive', 'Last 7 Days'); break;
+        case 'last30':    updateDateLabel('Last 30 Days', 'archive', 'Last 30 Days'); break;
+        case 'custom':
+          if (selectedDate) {
+            const sel = new Date(selectedDate); sel.setHours(0,0,0,0);
+            updateDateLabel(formatDateLabel(sel), getDateBadgeType(sel), formatShortDate(sel));
+          }
+          break;
       }
     }
-    
-    function getDateBadgeType(date) {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      if (isSameDay(date, today)) {
-        return 'today';
-      } else if (isSameDay(date, yesterday)) {
-        return 'yesterday';
-      } else {
-        return 'archive';
-      }
-    }
-    
-    function formatShortDate(date) {
-      const options = { month: 'short', day: 'numeric' };
-      return date.toLocaleDateString('en-IN', options);
-    }
-    
-    function updateDateLabel(label, badgeType, badgeText) {
-      document.getElementById('dateLabel').textContent = label;
-      const badge = document.getElementById('dateBadge');
-      badge.textContent = badgeText;
-      badge.className = 'date-badge ' + badgeType;
-    }
-    
-    // Search Orders
-    function searchOrders() {
-      const searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
-      
-      if (!searchTerm) {
-        alert('Please enter Order ID or Phone Number');
-        return;
-      }
-      
-      const results = allOrders.filter(order => 
-        order.orderId.toLowerCase().includes(searchTerm) ||
-        order.phone.includes(searchTerm)
-      );
-      
-      if (results.length === 0) {
-        alert('No orders found for: ' + searchTerm);
-        return;
-      }
-      
-      // Display search results
-      currentFilter = 'all';
-      document.querySelectorAll('.filter-chip').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector('[data-filter="all"]').classList.add('active');
-      
-      allOrders = results;
+
+    function selectDateRange(range) {
+      currentDateRange = range;
+      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-range="${range}"]`).classList.add('active');
+      applyDateFilter();
       updateStats();
       renderOrders();
     }
-    
-    // View Archives
-    function viewArchives() {
-      alert('Archive Viewer\n\nComing Soon!\n\nYou can view archived orders by:\n1. Selecting a date from the calendar\n2. Using "Last 30 Days" to see older orders\n\nAll orders are automatically archived after 30 days but remain searchable.');
-    }
-    
-    // Update Statistics
-    function updateStats() {
-      const activeOrders = allOrders.filter(o => 
-        o.status !== 'rejected' && 
-        o.status !== 'cancelled' && 
-        o.status !== 'completed'
-      );
-      
-      const totalOrders = allOrders.length;
-      const totalRevenue = activeOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
-      
-      document.getElementById('totalOrders').textContent = totalOrders;
-      document.getElementById('totalRevenue').textContent = `₹${totalRevenue}`;
-      
-      document.getElementById('dateOrders').textContent = totalOrders;
-      document.getElementById('dateRevenue').textContent = `₹${totalRevenue}`;
-      
-      document.getElementById('badge-all').textContent = totalOrders;
-      document.getElementById('badge-pending').textContent = allOrders.filter(o => o.status === 'pending').length;
-      document.getElementById('badge-preparing').textContent = allOrders.filter(o => o.status === 'preparing' || o.status === 'accepted').length;
-      document.getElementById('badge-ready').textContent = allOrders.filter(o => o.status === 'ready').length;
-    }
-    
-    // Filter Orders by Status
-    function filterOrders(filter) {
-      currentFilter = filter;
-      
-      document.querySelectorAll('.filter-chip').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
-      
+
+    function selectCustomDate() {
+      selectedDate = document.getElementById('datePicker').value;
+      currentDateRange = 'custom';
+      document.querySelectorAll('.date-btn').forEach(b => b.classList.remove('active'));
+      applyDateFilter();
+      updateStats();
       renderOrders();
     }
-    
-function renderOrders() {
-  const grid = document.getElementById('ordersGrid');
-  const emptyState = document.getElementById('emptyState');
-  const approvalSection = document.getElementById('approvalSection');
-  const approvalGrid = document.getElementById('approvalGrid');
-  
-  // Separate approval queue
-  const needsApproval = allOrders.filter(o => 
-    o.status === 'pending_approval' && o.approvalStatus === 'pending'
-  );
-  
-  let filteredOrders = [...allOrders].filter(o => o.status !== 'pending_approval');
-  
-  if (currentFilter !== 'all') {
-    if (currentFilter === 'preparing') {
-      filteredOrders = filteredOrders.filter(o => o.status === 'preparing' || o.status === 'accepted');
-    } else {
-      filteredOrders = filteredOrders.filter(o => o.status === currentFilter);
+
+    // ── SEARCH ────────────────────────────────────────────────────
+    function searchOrders() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!query) { applyDateFilter(); updateStats(); renderOrders(); return; }
+      displayOrders = allOrders.filter(order =>
+        order.orderId.toLowerCase().includes(query) ||
+        order.phone.toString().includes(query) ||
+        order.name.toLowerCase().includes(query)
+      );
+      updateStats();
+      renderOrders();
     }
-  }
-  
-  // Render approval queue
-  if (needsApproval.length > 0) {
-    approvalSection.style.display = 'block';
-    approvalGrid.innerHTML = needsApproval.map(order => `
-      <div class="order-card approval-card" style="border: 2px solid #F59E0B; background: #FEF3C7;">
-        <div class="order-header">
-          <div>
-            <div class="order-id">⚠️ ${order.orderId}</div>
-            <div class="order-time">🕐 ${order.time}</div>
-          </div>
-          <div class="table-badge">🪑 Table ${order.table}</div>
-        </div>
-        
-        <div class="order-customer">
-          <div class="customer-name"><span>👤</span><span>${order.name}</span></div>
-          <div class="customer-phone"><span>📱</span><span>${order.phone}</span></div>
-        </div>
-        
-        <div style="background: #FEF3C7; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #F59E0B;">
-          <strong>🚨 Manual Approval Required</strong><br>
-          <span style="font-size: 14px; color: #92400E;">
-            This is the ${order.orderCount}th order from this table in the last 30 minutes.
-          </span>
-        </div>
-        
-        <div class="order-items">
-          <div class="order-items-title">Items Ordered</div>
-          <div class="items-list">${order.items}</div>
-        </div>
-        
-        <div class="order-total">
-          <div class="total-label">Total Amount</div>
-          <div class="total-amount">₹${order.total}</div>
-        </div>
-        
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
-          <button class="btn btn-accept" style="flex: 1;" onclick="approveOrder('${order.orderId}')">
-            ✓ Approve
-          </button>
-          <button class="btn btn-reject" style="flex: 1;" onclick="rejectApprovalRequest('${order.orderId}')">
-            ✗ Reject
-          </button>
-          <button class="btn" style="background: #1A1A1A; color: white;" onclick="blockPhone('${order.phone}')">
-            🚫 Block
-          </button>
-        </div>
-      </div>
-    `).join('');
-  } else {
-    approvalSection.style.display = 'none';
-  }
-  
-  // Render normal orders
-  if (filteredOrders.length === 0) {
-    grid.innerHTML = '';
-    emptyState.style.display = 'block';
-    return;
-  }
-  
-  emptyState.style.display = 'none';
-  
-  grid.innerHTML = filteredOrders.map(order => `
-    <div class="order-card ${order.status}">
-      <div class="order-header">
-        <div>
-          <div class="order-id">${order.orderId}</div>
-          <div class="order-time">🕐 ${order.time}</div>
-        </div>
-        <div class="table-badge">🪑 Table ${order.table}</div>
-      </div>
-      
-      <div class="order-customer">
-        <div class="customer-name">
-          <span>👤</span>
-          <span>${order.name}</span>
-        </div>
-        <div class="customer-phone">
-          <span>📱</span>
-          <span>${order.phone}</span>
-        </div>
-      </div>
-      
-      <div class="status-badge ${order.status}">
-        ${order.status === 'pending' ? '⏳ Pending' : ''}
-        ${order.status === 'accepted' ? '✅ Accepted' : ''}
-        ${order.status === 'rejected' ? '❌ Rejected' : ''}
-      </div>
-      
-      <div class="order-items">
-        <div class="order-items-title">Items Ordered</div>
-        <div class="items-list">${order.items}</div>
-      </div>
-      
-      <div class="order-total">
-        <div class="total-label">Total Amount</div>
-        <div class="total-amount">₹${order.total}</div>
-      </div>
-      
-      <div class="action-buttons">
-        ${order.status === 'pending' ? `
-          <button class="btn btn-accept" onclick="acceptOrder('${order.orderId}', '${order.phone}', '${order.name}', '${order.items}', '${order.total}')">
-            <span>✓</span> Accept Order
-          </button>
-          <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
-            <span>✕</span> Reject
-          </button>
-        ` : ''}
-        
-        ${order.status === 'accepted' ? `
-          <div style="text-align: center; padding: 16px; color: #10B981; font-weight: 600;">
-            ✅ Order Accepted - Food Being Prepared
-          </div>
-        ` : ''}
-        
-        ${order.status === 'rejected' ? `
-          <div style="text-align: center; padding: 16px; color: #EF4444; font-weight: 600;">
-            ❌ Order Rejected
-          </div>
-        ` : ''}
-      </div>
-    </div>
-  `).join('');
-}
-    
-    async function acceptOrder(orderId, phone, name, items, total) {
-        if (!confirm('Accept this order?')) return;
-  
-        try {
-          await fetch(SHEET_URL, {
-         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-        action: 'updateOrderStatus',
-        orderId: orderId,
-        status: 'accepted'
-      })
-    });
-    
-    // Send WhatsApp notification
-    sendWhatsAppNotification(phone, name, orderId, items, total);
-    
-    // Reload orders
-    setTimeout(() => loadOrders(true), 500);
-    
-    } catch (error) {
-    console.error('Error:', error);
-      alert('Error accepting order. Please try again.');
-      }
-      }
-    
-      
-      async function updateOrderStatus(orderId, status, eta) {
-      const updateData = {
-        action: 'updateOrderStatus',
-        orderId: orderId,
-        status: status
-             };
-  
-       await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(updateData)
-      });
+
+    // ── STATS ─────────────────────────────────────────────────────
+    function updateStats() {
+      const active = displayOrders.filter(o => o.status !== 'rejected' && o.status !== 'cancelled' && o.status !== 'completed');
+      const total  = displayOrders.length;
+      const rev    = active.reduce((s, o) => s + parseFloat(o.total || 0), 0);
+
+      document.getElementById('totalOrders').textContent   = total;
+      document.getElementById('totalRevenue').textContent  = '₹' + rev;
+      document.getElementById('dateOrders').textContent    = total;
+      document.getElementById('dateRevenue').textContent   = '₹' + rev;
+      document.getElementById('badge-all').textContent     = total;
+      document.getElementById('badge-pending').textContent = displayOrders.filter(o => o.status === 'pending').length;
+      document.getElementById('badge-preparing').textContent = displayOrders.filter(o => o.status === 'preparing' || o.status === 'accepted').length;
+      document.getElementById('badge-ready').textContent   = displayOrders.filter(o => o.status === 'ready').length;
+    }
+
+    function filterOrders(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+      document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+      renderOrders();
+    }
+
+    // ── RENDER ────────────────────────────────────────────────────
+    function renderOrders() {
+      const grid            = document.getElementById('ordersGrid');
+      const emptyState      = document.getElementById('emptyState');
+      const approvalSection = document.getElementById('approvalSection');
+      const approvalGrid    = document.getElementById('approvalGrid');
+
+      // Approval queue — always from full allOrders (never date-filtered out)
+      const needsApproval = allOrders.filter(o => o.status === 'pending_approval' && o.approvalStatus === 'pending');
+
+      // Normal orders from displayOrders
+      let filteredOrders = displayOrders.filter(o => o.status !== 'pending_approval');
+      if (currentFilter !== 'all') {
+        if (currentFilter === 'preparing') {
+          filteredOrders = filteredOrders.filter(o => o.status === 'preparing' || o.status === 'accepted');
+        } else {
+          filteredOrders = filteredOrders.filter(o => o.status === currentFilter);
         }
-    
-    async function updateOrderStatus(orderId, status, eta) {
-      const updateData = {
-        action: 'updateStatus',
-        orderId: orderId,
-        status: status,
-        eta: eta || ''
-      };
-      
-      await fetch(SHEET_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updateData),
-        mode: 'no-cors'
-      });
+      }
+
+      // Approval queue render
+      if (needsApproval.length > 0) {
+        approvalSection.style.display = 'block';
+        approvalGrid.innerHTML = needsApproval.map(order => `
+          <div class="order-card" style="border: 2px solid #F59E0B;">
+            <div class="order-header">
+              <div>
+                <div class="order-id">⚠️ ${order.orderId}</div>
+                <div class="order-time">🕐 ${order.time}</div>
+              </div>
+              <div class="table-badge">🪑 Table ${order.table}</div>
+            </div>
+            <div class="order-customer">
+              <div class="customer-name"><span>👤</span><span>${order.name}</span></div>
+              <div class="customer-phone"><span>📱</span><span>${order.phone}</span></div>
+            </div>
+            <div style="background:#FEF3C7;padding:12px;border-radius:8px;margin:12px 0;border-left:4px solid #F59E0B;">
+              <strong>🚨 Manual Approval Required</strong><br>
+              <span style="font-size:14px;color:#92400E;">This is the ${order.orderCount}th order from this table in the last 30 minutes.</span>
+            </div>
+            <div class="order-items">
+              <div class="order-items-title">Items Ordered</div>
+              <div class="items-list">${order.items}</div>
+            </div>
+            <div class="order-total">
+              <div class="total-label">Total Amount</div>
+              <div class="total-amount">₹${order.total}</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:16px;">
+              <button class="btn btn-accept" style="flex:1;" onclick="approveOrder('${order.orderId}')">✓ Approve</button>
+              <button class="btn btn-reject" style="flex:1;" onclick="rejectApprovalRequest('${order.orderId}')">✗ Reject</button>
+              <button class="btn" style="background:#1A1A1A;color:white;flex:1;" onclick="blockPhone('${order.phone}')">🚫 Block</button>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        approvalSection.style.display = 'none';
+      }
+
+      // Normal orders render
+      if (filteredOrders.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      grid.innerHTML = filteredOrders.map(order => `
+        <div class="order-card ${order.status}">
+          <div class="order-header">
+            <div>
+              <div class="order-id">${order.orderId}</div>
+              <div class="order-time">🕐 ${order.time}</div>
+            </div>
+            <div class="table-badge">🪑 Table ${order.table}</div>
+          </div>
+          <div class="order-customer">
+            <div class="customer-name"><span>👤</span><span>${order.name}</span></div>
+            <div class="customer-phone"><span>📱</span><span>${order.phone}</span></div>
+          </div>
+          <div class="status-badge ${order.status}">
+            ${order.status === 'pending'  ? '⏳ Pending'  : ''}
+            ${order.status === 'accepted' ? '✅ Accepted' : ''}
+            ${order.status === 'rejected' ? '❌ Rejected' : ''}
+            ${order.status === 'ready'    ? '🟢 Ready'    : ''}
+          </div>
+          <div class="order-items">
+            <div class="order-items-title">Items Ordered</div>
+            <div class="items-list">${order.items}</div>
+          </div>
+          <div class="order-total">
+            <div class="total-label">Total Amount</div>
+            <div class="total-amount">₹${order.total}</div>
+          </div>
+          <div class="action-buttons">
+            ${order.status === 'pending' ? `
+              <button class="btn btn-accept" onclick="acceptOrder('${order.orderId}','${order.phone}','${order.name}',\`${order.items}\`,'${order.total}')">
+                <span>✓</span> Accept Order
+              </button>
+              <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
+                <span>✕</span> Reject
+              </button>
+            ` : ''}
+            ${order.status === 'accepted' ? `
+              <div style="grid-column:1/-1;text-align:center;padding:16px;color:#10B981;font-weight:600;">
+                ✅ Order Accepted — Food Being Prepared
+              </div>
+            ` : ''}
+            ${order.status === 'rejected' ? `
+              <div style="grid-column:1/-1;text-align:center;padding:16px;color:#EF4444;font-weight:600;">
+                ❌ Order Rejected
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // ── ACTIONS ───────────────────────────────────────────────────
+    async function acceptOrder(orderId, phone, name, items, total) {
+      if (!confirm('Accept this order?')) return;
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateOrderStatus', orderId, status: 'accepted' })
+        });
+        sendWhatsAppNotification(phone, name, orderId, items, total);
+        setTimeout(() => loadOrders(true), 500);
+      } catch (e) { console.error(e); alert('Error accepting order.'); }
+    }
+
+    async function rejectOrder(orderId) {
+      if (!confirm('Reject this order?')) return;
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'updateOrderStatus', orderId, status: 'rejected' })
+        });
+        setTimeout(() => loadOrders(true), 500);
+      } catch (e) { console.error(e); alert('Error rejecting order.'); }
     }
 
     async function approveOrder(orderId) {
-  if (!confirm('Approve this order?\n\nIt will move to the normal pending queue.')) return;
-  
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        action: 'approveOrder',
-        orderId: orderId
-      })
-    });
-    
-    alert('✅ Order approved!');
-    setTimeout(() => loadOrders(true), 500);
-    
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error approving order.');
-  }
-}
-
-async function rejectApprovalRequest(orderId) {
-  const reason = prompt('Why reject this order?');
-  if (reason === null) return;
-  
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        action: 'rejectPendingOrder',
-        orderId: orderId
-      })
-    });
-    
-    alert('❌ Order rejected.');
-    setTimeout(() => loadOrders(true), 500);
-    
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error rejecting order.');
-  }
-}
-
-async function blockPhone(phone) {
-  if (!confirm(`Block phone number ${phone}?`)) return;
-  
-  const reason = prompt('Block reason:') || 'Spam';
-  
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        action: 'blockPhone',
-        phone: phone,
-        reason: reason
-      })
-    });
-    
-    alert(`✅ Phone ${phone} blocked.`);
-    setTimeout(() => loadOrders(true), 500);
-    
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-    
-    function sendWhatsAppNotification(phone, name, orderId, items, total) {
-      const message = `🎉 Order Confirmed - ${RESTAURANT_NAME}
-
-Hi ${name},
-
-Your order has been accepted!
-Order ID: ${orderId}
-
-Items:
-${items}
-
-Total: ₹${total}
-
-Your food will be ready in 15-20 minutes.
-
-Thank you for dining with us! 🍽️`;
-
-      const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-      window.open(whatsappUrl, '_blank');
+      if (!confirm('Approve this order?\n\nIt will move to the pending queue.')) return;
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'approveOrder', orderId })
+        });
+        alert('✅ Order approved!');
+        setTimeout(() => loadOrders(true), 500);
+      } catch (e) { console.error(e); alert('Error approving order.'); }
     }
-    
-    // Auto-refresh (silent)
+
+    async function rejectApprovalRequest(orderId) {
+      const reason = prompt('Why reject this order?');
+      if (reason === null) return;
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'rejectPendingOrder', orderId })
+        });
+        alert('❌ Order rejected.');
+        setTimeout(() => loadOrders(true), 500);
+      } catch (e) { console.error(e); alert('Error rejecting order.'); }
+    }
+
+    async function blockPhone(phone) {
+      if (!confirm(`Block phone number ${phone}?`)) return;
+      const reason = prompt('Block reason:') || 'Spam';
+      try {
+        await fetch(SHEET_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'blockPhone', phone, reason })
+        });
+        alert(`✅ Phone ${phone} blocked.`);
+        setTimeout(() => loadOrders(true), 500);
+      } catch (e) { console.error(e); }
+    }
+
+    // ── WHATSAPP ──────────────────────────────────────────────────
+    function sendWhatsAppNotification(phone, name, orderId, items, total) {
+      const message = `🎉 Order Confirmed - ${RESTAURANT_NAME}\n\nHi ${name},\n\nYour order has been accepted!\nOrder ID: ${orderId}\n\nItems:\n${items}\n\nTotal: ₹${total}\n\nYour food will be ready in 15-20 minutes.\n\nThank you for dining with us! 🍽️`;
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    // ── HELPERS ───────────────────────────────────────────────────
+    function parseOrderDate(timeString) {
+      if (!timeString) return new Date(0);
+      const parts = timeString.split(',')[0].trim().split('/');
+      const date = new Date(`${parts[2]}-${String(parts[1]).padStart(2,'0')}-${String(parts[0]).padStart(2,'0')}`);
+      date.setHours(0,0,0,0);
+      return date;
+    }
+
+    function isSameDay(d1, d2) {
+      return d1.getFullYear()===d2.getFullYear() && d1.getMonth()===d2.getMonth() && d1.getDate()===d2.getDate();
+    }
+
+    function updateDateLabel(label, badgeType, badgeText) {
+      document.getElementById('dateLabel').textContent = label;
+      const badge = document.getElementById('dateBadge');
+      badge.className = `date-badge ${badgeType}`;
+      badge.textContent = badgeText;
+    }
+
+    function formatDateLabel(date) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+      if (isSameDay(date,today)) return 'Today';
+      if (isSameDay(date,yesterday)) return 'Yesterday';
+      return date.toLocaleDateString('en-IN', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    }
+
+    function formatShortDate(date) {
+      return date.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+    }
+
+    function getDateBadgeType(date) {
+      const today = new Date(); today.setHours(0,0,0,0);
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+      if (isSameDay(date,today)) return 'today';
+      if (isSameDay(date,yesterday)) return 'yesterday';
+      return 'archive';
+    }
+
+    function viewArchives() {
+      alert('Archive Viewer\n\nUse "Last 30 Days" or pick a date from the calendar to view older orders.');
+    }
+
+    // ── AUTO REFRESH ──────────────────────────────────────────────
     function startAutoRefresh() {
       autoRefreshInterval = setInterval(() => {
-        if (currentDateRange === 'today') {
-          loadOrders(true);
-        }
+        if (currentDateRange === 'today') loadOrders(true);
       }, 3000);
     }
-    
+
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         clearInterval(autoRefreshInterval);
-      } else {
+      } else if (document.getElementById('dashboard').style.display !== 'none') {
         startAutoRefresh();
       }
     });
   </script>
-  
+
 </body>
 </html>
