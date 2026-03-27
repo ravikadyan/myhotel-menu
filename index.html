@@ -736,7 +736,7 @@
   </div>
   
   <script>
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxODoJTFnGTRMSUAHPRJaFq8U_IsWqhwDpyX7m3g6f3PLczfKSQHjfP-wCAqhnIseIr/exec';
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw6iSf6C5XBQS_qdD6OZc6iyip5p7TAqERjhmaGqyk39Htg7dkK8IZfx58co3D53Qfb/exec';
     const OWNER_WHATSAPP = '917404787308';
     const RESTAURANT_NAME = 'MyHotel';
     const INSTAGRAM_URL = 'https://instagram.com/yourrestaurant';
@@ -1027,21 +1027,42 @@
         </div>
       `;
     }
-    
+   
     async function placeOrder() {
       const customerName = document.getElementById('customerName').value.trim();
       const customerPhone = document.getElementById('customerPhone').value.trim();
       
+      // Basic validation
       if (!customerName || !customerPhone) {
-        alert('Please fill all details');
+        alert('⚠️ Please fill all details');
         return;
       }
       
+      // Phone length check
       if (customerPhone.length !== 10 || !/^\d+$/.test(customerPhone)) {
-        alert('Please enter valid 10-digit phone number');
+        alert('❌ Please enter valid 10-digit phone number');
         return;
       }
       
+      // Phone must start with 6, 7, 8, or 9
+      if (!['6','7','8','9'].includes(customerPhone[0])) {
+        alert('❌ Invalid phone number\n\nPhone must start with 6, 7, 8, or 9\n\nExample: 9876543210');
+        return;
+      }
+      
+      // Cannot be all same digits
+      if (/^(\d)\1{9}$/.test(customerPhone)) {
+        alert('❌ Invalid phone number\n\nCannot use repeating digits\n\n(e.g., 9999999999 is not allowed)');
+        return;
+      }
+      
+      // Cannot be sequential
+      if (customerPhone === '0123456789' || customerPhone === '1234567890') {
+        alert('❌ Invalid phone number\n\nSequential numbers not allowed');
+        return;
+      }
+      
+      // Disable button
       document.getElementById('placeOrderBtn').disabled = true;
       document.getElementById('placeOrderBtn').textContent = 'Placing Order...';
       
@@ -1051,39 +1072,64 @@
       const items = cart.map(item => `${item.name} x${item.qty}`).join(', ');
       
       const orderData = {
-        orderId,
+        action: 'placeOrder',
         name: customerName,
         phone: customerPhone,
         table: tableNum,
-        items,
-        total,
-        time: new Date().toLocaleString('en-IN'),
-        status: 'pending',
-        eta: '',
+        items: items,
+        total: total,
         payment: 'cash'
       };
       
       try {
-        const params = new URLSearchParams(orderData);
-        
-        await fetch(SHEET_URL + '?' + params.toString(), {
-          method: 'GET',
-          mode: 'no-cors'
+        const response = await fetch(SHEET_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(orderData)
         });
         
-        orderPlaced = true;
-        window.history.pushState(null, null, window.location.href);
+        const result = await response.json();
         
-        showWaitingScreen(customerName, customerPhone);
-        startStatusPolling(orderId);
+        console.log('Order response:', result);
+        
+        // Handle errors from server (anti-spam rules)
+        if (result.result === 'error') {
+          alert('❌ ' + result.message);
+          document.getElementById('placeOrderBtn').disabled = false;
+          document.getElementById('placeOrderBtn').textContent = 'Place Order - ₹' + total;
+          return;
+        }
+        
+        // Handle approval required (Rule 4)
+        if (result.result === 'approval_required') {
+          orderId = result.orderId;
+          orderPlaced = true;
+          window.history.pushState(null, null, window.location.href);
+          showApprovalWaitingScreen(customerName, customerPhone);
+          return;
+        }
+        
+        // Success
+        if (result.result === 'success') {
+          orderId = result.orderId;
+          orderPlaced = true;
+          window.history.pushState(null, null, window.location.href);
+          showWaitingScreen(customerName, customerPhone);
+          startStatusPolling(orderId);
+        }
         
       } catch (error) {
         console.error('Error:', error);
-        alert('Error placing order. Please try again.');
+        alert('❌ Error placing order. Please try again.');
         document.getElementById('placeOrderBtn').disabled = false;
         document.getElementById('placeOrderBtn').textContent = 'Place Order - ₹' + total;
       }
     }
+
+
+    
     
     function showWaitingScreen(customerName, customerPhone) {
       const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
@@ -1123,7 +1169,91 @@
         </div>
       `;
     }
+    function showApprovalWaitingScreen(customerName, customerPhone) {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      
+      document.getElementById('cartSection').style.display = 'none';
+      document.getElementById('waitingSection').style.display = 'block';
+      
+      document.getElementById('confirmName').textContent = customerName;
+      document.getElementById('confirmPhone').textContent = customerPhone;
+      document.getElementById('confirmTable').textContent = 'Table ' + tableNum;
+      document.getElementById('confirmItems').textContent = itemCount + (itemCount === 1 ? ' item' : ' items');
+      document.getElementById('confirmTotal').textContent = '₹' + total;
+      document.getElementById('confirmOrderId').textContent = orderId;
+      
+      // Change status to approval pending
+      const statusDiv = document.getElementById('orderStatus');
+      statusDiv.innerHTML = `
+        <div style="text-align:center; padding: 30px 20px;">
+          <div style="font-size: 56px; margin-bottom: 16px;">⏳</div>
+          <h2 style="color: #F59E0B; margin-bottom: 12px; font-size: 22px;">Pending Approval</h2>
+          <p style="color: #6B6B6B; font-size: 15px; line-height: 1.6; max-width: 400px; margin: 0 auto;">
+            Your order is being reviewed by the restaurant due to high activity at your table.
+            <br><br>
+            <strong>You will be notified shortly.</strong>
+            <br><br>
+            <span style="font-size: 13px; color: #92400E; background: #FEF3C7; padding: 8px 12px; border-radius: 8px; display: inline-block; margin-top: 8px;">
+              ⚠️ This is a security check to prevent spam
+            </span>
+          </p>
+        </div>
+      `;
+      
+      // Poll for approval status
+      startApprovalPolling(orderId);
+    }
     
+    function startApprovalPolling(orderId) {
+      const pollInterval = setInterval(async () => {
+        try {
+          const response = await fetch(SHEET_URL);
+          const data = await response.json();
+          
+          if (data.result === 'success' && data.data) {
+            const orders = data.data.slice(1);
+            const order = orders.find(o => o[0] === orderId);
+            
+            if (order) {
+              const status = order[7];
+              const approvalStatus = order[10];
+              
+              // If approved, show normal waiting screen
+              if (status === 'pending' && approvalStatus === 'approved') {
+                clearInterval(pollInterval);
+                showWaitingScreen(
+                  document.getElementById('confirmName').textContent,
+                  document.getElementById('confirmPhone').textContent
+                );
+                startStatusPolling(orderId);
+              }
+              
+              // If rejected
+              if (status === 'rejected') {
+                clearInterval(pollInterval);
+                const statusDiv = document.getElementById('orderStatus');
+                statusDiv.innerHTML = `
+                  <div style="text-align:center; padding: 30px 20px;">
+                    <div style="font-size: 56px; margin-bottom: 16px;">❌</div>
+                    <h2 style="color: #EF4444; margin-bottom: 12px; font-size: 22px;">Order Rejected</h2>
+                    <p style="color: #6B6B6B; font-size: 15px; line-height: 1.6;">
+                      Sorry, the restaurant could not accept your order at this time.
+                      <br><br>
+                      Please contact the restaurant staff or try again later.
+                    </p>
+                  </div>
+                `;
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Polling error:', error);
+        }
+      }, 3000); // Check every 3 seconds
+    }
+
+
     function startStatusPolling(orderId) {
       pollingInterval = setInterval(async () => {
         try {
