@@ -842,13 +842,21 @@
         <p>No orders for the selected date range</p>
       </div>
       
+      <!-- Approval Queue Section -->
+<div id="approvalSection" style="display: none; margin-bottom: 32px;">
+  <h2 style="font-size: 24px; margin-bottom: 16px; color: #F59E0B; display: flex; align-items: center; gap: 8px;">
+    <span>⚠️</span> Orders Needing Approval
+  </h2>
+  <div id="approvalGrid" class="orders-grid"></div>
+</div>
+
       <div class="orders-grid" id="ordersGrid"></div>
     </div>
     
   </div>
   
   <script>
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxODoJTFnGTRMSUAHPRJaFq8U_IsWqhwDpyX7m3g6f3PLczfKSQHjfP-wCAqhnIseIr/exec';
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbw6iSf6C5XBQS_qdD6OZc6iyip5p7TAqERjhmaGqyk39Htg7dkK8IZfx58co3D53Qfb/exec';
     const OWNER_WHATSAPP = '917404787308';
     const RESTAURANT_NAME = 'MyHotel';
     const PIN_CODE = '1234';
@@ -933,17 +941,19 @@
         const data = await response.json();
         
         if (data.result === 'success' && data.data) {
-          allOrders = data.data.slice(1).map(row => ({
-            orderId: row[0],
-            name: row[1],
-            phone: row[2],
-            table: row[3],
-            items: row[4],
-            total: row[5],
-            time: row[6],
-            status: row[7] || 'pending',
-            eta: row[8] || '',
-            payment: row[9] || 'cash'
+        allOrders = data.data.slice(1).map(row => ({
+          orderId: row[0],
+          name: row[1],
+          phone: row[2],
+          table: row[3],
+          items: row[4],
+          total: row[5],
+          time: row[6],
+          status: row[7] || 'pending',
+          eta: row[8] || '',
+          payment: row[9] || 'cash',
+          approvalStatus: row[10] || 'auto',
+          orderCount: row[11] || 1
           })).filter(order => order.orderId).reverse();
           
           filterByDateRange();
@@ -1145,138 +1155,191 @@
       renderOrders();
     }
     
-    // Render Orders
-    function renderOrders() {
-      const grid = document.getElementById('ordersGrid');
-      const emptyState = document.getElementById('emptyState');
-      
-      let filteredOrders = [...allOrders];
-      
-      if (currentFilter !== 'all') {
-        if (currentFilter === 'preparing') {
-          filteredOrders = allOrders.filter(o => o.status === 'preparing' || o.status === 'accepted');
-        } else {
-          filteredOrders = allOrders.filter(o => o.status === currentFilter);
-        }
-      }
-      
-      if (filteredOrders.length === 0) {
-        grid.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-      }
-      
-      emptyState.style.display = 'none';
-      
-      grid.innerHTML = filteredOrders.map(order => `
-        <div class="order-card ${order.status}">
-          <div class="order-header">
-            <div>
-              <div class="order-id">${order.orderId}</div>
-              <div class="order-time">🕐 ${order.time}</div>
-            </div>
-            <div class="table-badge">🪑 Table ${order.table}</div>
+function renderOrders() {
+  const grid = document.getElementById('ordersGrid');
+  const emptyState = document.getElementById('emptyState');
+  const approvalSection = document.getElementById('approvalSection');
+  const approvalGrid = document.getElementById('approvalGrid');
+  
+  // Separate approval queue
+  const needsApproval = allOrders.filter(o => 
+    o.status === 'pending_approval' && o.approvalStatus === 'pending'
+  );
+  
+  let filteredOrders = [...allOrders].filter(o => o.status !== 'pending_approval');
+  
+  if (currentFilter !== 'all') {
+    if (currentFilter === 'preparing') {
+      filteredOrders = filteredOrders.filter(o => o.status === 'preparing' || o.status === 'accepted');
+    } else {
+      filteredOrders = filteredOrders.filter(o => o.status === currentFilter);
+    }
+  }
+  
+  // Render approval queue
+  if (needsApproval.length > 0) {
+    approvalSection.style.display = 'block';
+    approvalGrid.innerHTML = needsApproval.map(order => `
+      <div class="order-card approval-card" style="border: 2px solid #F59E0B; background: #FEF3C7;">
+        <div class="order-header">
+          <div>
+            <div class="order-id">⚠️ ${order.orderId}</div>
+            <div class="order-time">🕐 ${order.time}</div>
           </div>
-          
-          <div class="order-customer">
-            <div class="customer-name">
-              <span>👤</span>
-              <span>${order.name}</span>
-            </div>
-            <div class="customer-phone">
-              <span>📱</span>
-              <span>${order.phone}</span>
-            </div>
-          </div>
-          
-          <div class="status-badge ${order.status}">
-            ${order.status === 'pending' ? '⏳ Pending' : ''}
-            ${order.status === 'preparing' || order.status === 'accepted' ? '👨‍🍳 Preparing' : ''}
-            ${order.status === 'ready' ? '✅ Ready' : ''}
-          </div>
-          
-          <div class="order-items">
-            <div class="order-items-title">Items Ordered</div>
-            <div class="items-list">${order.items}</div>
-          </div>
-          
-          <div class="order-total">
-            <div class="total-label">Total Amount</div>
-            <div class="total-amount">₹${order.total}</div>
-          </div>
-          
-          <div class="action-buttons ${order.status === 'ready' ? 'single' : ''}">
-            ${order.status === 'pending' ? `
-              <button class="btn btn-accept" onclick="acceptOrder('${order.orderId}', '${order.phone}', '${order.name}', '${order.items}', '${order.total}')">
-                <span>✓</span> Accept Order
-              </button>
-              <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
-                <span>✕</span> Reject
-              </button>
-            ` : ''}
-            
-            ${order.status === 'preparing' || order.status === 'accepted' ? `
-              <button class="btn btn-ready" onclick="markReady('${order.orderId}')">
-                <span>✓</span> Mark Ready
-              </button>
-              <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
-                <span>✕</span> Cancel
-              </button>
-            ` : ''}
-            
-            ${order.status === 'ready' ? `
-              <button class="btn btn-complete" onclick="completeOrder('${order.orderId}')">
-                <span>✓</span> Complete Order
-              </button>
-            ` : ''}
-          </div>
+          <div class="table-badge">🪑 Table ${order.table}</div>
         </div>
-      `).join('');
-    }
+        
+        <div class="order-customer">
+          <div class="customer-name"><span>👤</span><span>${order.name}</span></div>
+          <div class="customer-phone"><span>📱</span><span>${order.phone}</span></div>
+        </div>
+        
+        <div style="background: #FEF3C7; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #F59E0B;">
+          <strong>🚨 Manual Approval Required</strong><br>
+          <span style="font-size: 14px; color: #92400E;">
+            This is the ${order.orderCount}th order from this table in the last 30 minutes.
+          </span>
+        </div>
+        
+        <div class="order-items">
+          <div class="order-items-title">Items Ordered</div>
+          <div class="items-list">${order.items}</div>
+        </div>
+        
+        <div class="order-total">
+          <div class="total-label">Total Amount</div>
+          <div class="total-amount">₹${order.total}</div>
+        </div>
+        
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button class="btn btn-accept" style="flex: 1;" onclick="approveOrder('${order.orderId}')">
+            ✓ Approve
+          </button>
+          <button class="btn btn-reject" style="flex: 1;" onclick="rejectApprovalRequest('${order.orderId}')">
+            ✗ Reject
+          </button>
+          <button class="btn" style="background: #1A1A1A; color: white;" onclick="blockPhone('${order.phone}')">
+            🚫 Block
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } else {
+    approvalSection.style.display = 'none';
+  }
+  
+  // Render normal orders
+  if (filteredOrders.length === 0) {
+    grid.innerHTML = '';
+    emptyState.style.display = 'block';
+    return;
+  }
+  
+  emptyState.style.display = 'none';
+  
+  grid.innerHTML = filteredOrders.map(order => `
+    <div class="order-card ${order.status}">
+      <div class="order-header">
+        <div>
+          <div class="order-id">${order.orderId}</div>
+          <div class="order-time">🕐 ${order.time}</div>
+        </div>
+        <div class="table-badge">🪑 Table ${order.table}</div>
+      </div>
+      
+      <div class="order-customer">
+        <div class="customer-name">
+          <span>👤</span>
+          <span>${order.name}</span>
+        </div>
+        <div class="customer-phone">
+          <span>📱</span>
+          <span>${order.phone}</span>
+        </div>
+      </div>
+      
+      <div class="status-badge ${order.status}">
+        ${order.status === 'pending' ? '⏳ Pending' : ''}
+        ${order.status === 'accepted' ? '✅ Accepted' : ''}
+        ${order.status === 'rejected' ? '❌ Rejected' : ''}
+      </div>
+      
+      <div class="order-items">
+        <div class="order-items-title">Items Ordered</div>
+        <div class="items-list">${order.items}</div>
+      </div>
+      
+      <div class="order-total">
+        <div class="total-label">Total Amount</div>
+        <div class="total-amount">₹${order.total}</div>
+      </div>
+      
+      <div class="action-buttons">
+        ${order.status === 'pending' ? `
+          <button class="btn btn-accept" onclick="acceptOrder('${order.orderId}', '${order.phone}', '${order.name}', '${order.items}', '${order.total}')">
+            <span>✓</span> Accept Order
+          </button>
+          <button class="btn btn-reject" onclick="rejectOrder('${order.orderId}')">
+            <span>✕</span> Reject
+          </button>
+        ` : ''}
+        
+        ${order.status === 'accepted' ? `
+          <div style="text-align: center; padding: 16px; color: #10B981; font-weight: 600;">
+            ✅ Order Accepted - Food Being Prepared
+          </div>
+        ` : ''}
+        
+        ${order.status === 'rejected' ? `
+          <div style="text-align: center; padding: 16px; color: #EF4444; font-weight: 600;">
+            ❌ Order Rejected
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
     
-    // Order Actions
     async function acceptOrder(orderId, phone, name, items, total) {
-      try {
-        await updateOrderStatus(orderId, 'accepted', '15-20 minutes');
-        sendWhatsAppNotification(phone, name, orderId, items, total);
-        setTimeout(() => loadOrders(true), 500);
-      } catch (error) {
-        console.error('Error accepting order:', error);
-        alert('Error accepting order. Please try again.');
-      }
-    }
-    
-    async function markReady(orderId) {
-      try {
-        await updateOrderStatus(orderId, 'ready', '');
-        setTimeout(() => loadOrders(true), 500);
-      } catch (error) {
-        console.error('Error marking ready:', error);
-        alert('Error updating order. Please try again.');
-      }
-    }
-    
-    async function completeOrder(orderId) {
-      if (confirm('Mark this order as completed?')) {
+        if (!confirm('Accept this order?')) return;
+  
         try {
-          await updateOrderStatus(orderId, 'completed', '');
-          setTimeout(() => loadOrders(true), 500);
-        } catch (error) {
-          console.error('Error completing order:', error);
-        }
-      }
-    }
+          await fetch(SHEET_URL, {
+         method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+        action: 'updateOrderStatus',
+        orderId: orderId,
+        status: 'accepted'
+      })
+    });
     
-    async function rejectOrder(orderId) {
-      if (confirm('Are you sure you want to reject this order?')) {
-        try {
-          await updateOrderStatus(orderId, 'rejected', '');
-          setTimeout(() => loadOrders(true), 500);
-        } catch (error) {
-          console.error('Error rejecting order:', error);
-        }
+    // Send WhatsApp notification
+    sendWhatsAppNotification(phone, name, orderId, items, total);
+    
+    // Reload orders
+    setTimeout(() => loadOrders(true), 500);
+    
+    } catch (error) {
+    console.error('Error:', error);
+      alert('Error accepting order. Please try again.');
       }
-    }
+      }
+    
+      
+      async function updateOrderStatus(orderId, status, eta) {
+      const updateData = {
+        action: 'updateOrderStatus',
+        orderId: orderId,
+        status: status
+             };
+  
+       await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(updateData)
+      });
+        }
     
     async function updateOrderStatus(orderId, status, eta) {
       const updateData = {
@@ -1295,6 +1358,75 @@
         mode: 'no-cors'
       });
     }
+
+    async function approveOrder(orderId) {
+  if (!confirm('Approve this order?\n\nIt will move to the normal pending queue.')) return;
+  
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        action: 'approveOrder',
+        orderId: orderId
+      })
+    });
+    
+    alert('✅ Order approved!');
+    setTimeout(() => loadOrders(true), 500);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error approving order.');
+  }
+}
+
+async function rejectApprovalRequest(orderId) {
+  const reason = prompt('Why reject this order?');
+  if (reason === null) return;
+  
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        action: 'rejectPendingOrder',
+        orderId: orderId
+      })
+    });
+    
+    alert('❌ Order rejected.');
+    setTimeout(() => loadOrders(true), 500);
+    
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Error rejecting order.');
+  }
+}
+
+async function blockPhone(phone) {
+  if (!confirm(`Block phone number ${phone}?`)) return;
+  
+  const reason = prompt('Block reason:') || 'Spam';
+  
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        action: 'blockPhone',
+        phone: phone,
+        reason: reason
+      })
+    });
+    
+    alert(`✅ Phone ${phone} blocked.`);
+    setTimeout(() => loadOrders(true), 500);
+    
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
     
     function sendWhatsAppNotification(phone, name, orderId, items, total) {
       const message = `🎉 Order Confirmed - ${RESTAURANT_NAME}
